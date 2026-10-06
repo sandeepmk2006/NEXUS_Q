@@ -41,7 +41,7 @@ export interface AnalysisResult {
 export async function analyzemedicalImage(input: AnalysisInput): Promise<AnalysisResult> {
   const startTime = Date.now();
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const systemPrompt = `You are NEXUS-Q, an advanced AI medical imaging assistant. You are a SECOND OPINION TOOL — never a replacement for clinical judgment. Your role is to assist physicians by identifying and localizing potential abnormalities in medical images.
 
@@ -120,7 +120,7 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
       imageQuality: parsedResult.imageQuality || 'Unknown',
       disclaimer: parsedResult.disclaimer || 'This AI analysis is intended as a decision support tool only and should not replace clinical judgment.',
       rawResponse: rawText,
-      modelUsed: 'gemini-2.0-flash-exp',
+      modelUsed: 'gemini-2.5-flash',
       processingTime,
     };
   }
@@ -133,7 +133,7 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
     imageQuality: 'Unknown',
     disclaimer: 'This AI analysis is intended as a decision support tool only and should not replace clinical judgment.',
     rawResponse: rawText,
-    modelUsed: 'gemini-2.0-flash-exp',
+    modelUsed: 'gemini-2.5-flash',
     processingTime,
   };
 }
