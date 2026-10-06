@@ -1,68 +1,112 @@
+import fs from 'fs';
+import path from 'path';
 import { db as firestoreDb } from '../config/firebase';
 
-// In-memory fallback storage in case Firebase Admin credentials are not yet configured
-class MemoryCollection {
-  private data = new Map<string, any>();
+const DB_FILE = path.join(process.cwd(), 'localdb.json');
+
+function loadDb(): Record<string, any> {
+  if (fs.existsSync(DB_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+}
+
+function saveDb(data: Record<string, any>) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+}
+
+let dbData = loadDb();
+
+class FileCollection {
+  private name: string;
+
+  constructor(name: string) {
+    this.name = name;
+    if (!dbData[this.name]) {
+      dbData[this.name] = {};
+    }
+  }
+
+  private get collectionData() {
+    return dbData[this.name];
+  }
 
   doc(id: string) {
     const self = this;
     return {
-      get: async () => ({
-        exists: self.data.has(id),
-        id,
-        data: () => self.data.get(id),
-      }),
+      get: async () => {
+        const data = self.collectionData[id];
+        return {
+          exists: !!data,
+          id,
+          data: () => data,
+        };
+      },
       set: async (docData: any) => {
-        self.data.set(id, { ...docData, id });
+        self.collectionData[id] = { ...docData, id };
+        saveDb(dbData);
       },
       update: async (updates: any) => {
-        const existing = self.data.get(id) || {};
-        self.data.set(id, { ...existing, ...updates, id });
+        const existing = self.collectionData[id] || {};
+        self.collectionData[id] = { ...existing, ...updates, id };
+        saveDb(dbData);
       },
       delete: async () => {
-        self.data.delete(id);
+        delete self.collectionData[id];
+        saveDb(dbData);
       },
     };
   }
 
   where(field: string, op: string, value: any) {
-    const all = Array.from(this.data.values()).filter((item) => {
+    const all = Object.values(this.collectionData) as any[];
+    const filtered = all.filter((item) => {
       if (op === '==') return item[field] === value;
       return true;
     });
 
     return {
-      where: (f2: string, op2: string, v2: any) => ({
-        get: async () => ({
-          size: all.filter((i) => i[f2] === v2).length,
-          docs: all.filter((i) => i[f2] === v2).map((item) => ({ id: item.id, data: () => item })),
-        }),
-      }),
-      orderBy: (_field: string, _dir?: string) => ({
-        limit: (_n: number) => ({
+      where: (f2: string, op2: string, v2: any) => {
+        const filtered2 = filtered.filter((i) => {
+          if (op2 === '==') return i[f2] === v2;
+          return true;
+        });
+        return {
           get: async () => ({
-            size: all.length,
-            docs: all.map((item) => ({ id: item.id, data: () => item })),
+            size: filtered2.length,
+            docs: filtered2.map((item) => ({ id: item.id, data: () => item })),
+          }),
+        };
+      },
+      orderBy: (_field: string, _dir?: string) => ({
+        limit: (n: number) => ({
+          get: async () => ({
+            size: Math.min(filtered.length, n),
+            docs: filtered.slice(0, n).map((item) => ({ id: item.id, data: () => item })),
           }),
         }),
         get: async () => ({
-          size: all.length,
-          docs: all.map((item) => ({ id: item.id, data: () => item })),
+          size: filtered.length,
+          docs: filtered.map((item) => ({ id: item.id, data: () => item })),
         }),
       }),
       get: async () => ({
-        size: all.length,
-        docs: all.map((item) => ({ id: item.id, data: () => item })),
+        size: filtered.length,
+        docs: filtered.map((item) => ({ id: item.id, data: () => item })),
       }),
     };
   }
 
   orderBy(_field: string, _dir?: string) {
-    const all = Array.from(this.data.values());
+    const all = Object.values(this.collectionData) as any[];
     return {
       limit: (n: number) => ({
         get: async () => ({
-          size: all.slice(0, n).length,
+          size: Math.min(all.length, n),
           docs: all.slice(0, n).map((item) => ({ id: item.id, data: () => item })),
         }),
       }),
@@ -74,7 +118,7 @@ class MemoryCollection {
   }
 
   async get() {
-    const all = Array.from(this.data.values());
+    const all = Object.values(this.collectionData) as any[];
     return {
       size: all.length,
       docs: all.map((item) => ({ id: item.id, data: () => item })),
@@ -83,16 +127,17 @@ class MemoryCollection {
 
   async add(item: any) {
     const id = item.id || `doc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    this.data.set(id, { ...item, id });
+    this.collectionData[id] = { ...item, id };
+    saveDb(dbData);
     return { id };
   }
 }
 
-const memoryStore = new Map<string, MemoryCollection>();
+const memoryStore = new Map<string, FileCollection>();
 
-function getMemoryCollection(name: string): MemoryCollection {
+function getMemoryCollection(name: string): FileCollection {
   if (!memoryStore.has(name)) {
-    memoryStore.set(name, new MemoryCollection());
+    memoryStore.set(name, new FileCollection(name));
   }
   return memoryStore.get(name)!;
 }
