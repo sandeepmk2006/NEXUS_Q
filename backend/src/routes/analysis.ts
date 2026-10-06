@@ -119,8 +119,11 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
       query = query.where('doctorId', '==', req.user!.uid);
     }
 
-    const snapshot = await query.orderBy('createdAt', 'desc').limit(50).get();
-    const analyses = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    const snapshot = await query.get();
+    let analyses = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    // Sort in memory and limit
+    analyses.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    analyses = analyses.slice(0, 50);
     res.json({ analyses });
   } catch (error: any) {
     res.status(500).json({ error: error.message });

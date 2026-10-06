@@ -17,8 +17,10 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
       query = query.where('assignedDoctorId', '==', req.user!.uid);
     }
 
-    const snapshot = await query.orderBy('createdAt', 'desc').get();
+    const snapshot = await query.get();
     const patients = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    // Sort in memory to avoid needing composite index in Firestore
+    patients.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     res.json({ patients });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -148,10 +150,10 @@ router.get('/:patientId/analyses', async (req: AuthRequest, res: Response): Prom
     const analysesSnapshot = await db
       .collection('analyses')
       .where('patientId', '==', patientId)
-      .orderBy('createdAt', 'desc')
       .get();
 
     const analyses = analysesSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    analyses.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     res.json({ analyses });
   } catch (error: any) {
     res.status(500).json({ error: error.message });

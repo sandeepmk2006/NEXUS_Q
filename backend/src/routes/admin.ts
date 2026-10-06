@@ -51,8 +51,9 @@ router.get('/patients', async (req: AuthRequest, res: Response): Promise<void> =
       query = query.where('assignedDoctorId', '==', doctorId);
     }
 
-    const snapshot = await query.orderBy('createdAt', 'desc').get();
+    const snapshot = await query.get();
     const patients = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    patients.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     res.json({ patients });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
