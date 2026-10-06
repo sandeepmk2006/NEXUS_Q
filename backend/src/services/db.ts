@@ -4,7 +4,7 @@ import { db as firestoreDb } from '../config/firebase';
 class MemoryCollection {
   private data = new Map<string, any>();
 
-  async doc(id: string) {
+  doc(id: string) {
     const self = this;
     return {
       get: async () => ({
