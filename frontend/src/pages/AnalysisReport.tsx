@@ -129,12 +129,12 @@ const AnalysisReport: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="text-xl font-bold text-white tracking-tight">NEXUS</span>
-                <span className="text-xl font-bold text-blue-400 tracking-tight">-Q</span>
-                <Badge variant="info">Second Opinion Report</Badge>
+                <span className="text-xl font-bold text-white tracking-tight">Tetrix</span>
+                <span className="text-xl font-bold text-blue-400 tracking-tight">AI</span>
+                <Badge variant="info">Clinical Decision Support</Badge>
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                Multimodal Medical Image Intelligence System
+                Diagnostic Copilot & Imaging Report
               </p>
             </div>
 
@@ -267,7 +267,7 @@ const AnalysisReport: React.FC = () => {
             <span className="font-bold text-red-300">Regulatory Medical Device Warning: </span>
             <p className="leading-relaxed">
               {analysis?.disclaimer ||
-                'NEXUS-Q is an assistive computer-aided detection (CADe) tool. It does not formulate an autonomous diagnosis. Final diagnostic synthesis and clinical interventions remain the sole legal responsibility of the licensed attending physician.'}
+                'TetrixAI is an assistive clinical decision support tool for certified physicians. Final diagnostic decisions and patient interventions remain the responsibility of the attending physician.'}
             </p>
           </div>
         </div>

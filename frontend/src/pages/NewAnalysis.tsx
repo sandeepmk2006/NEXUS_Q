@@ -147,17 +147,16 @@ const NewAnalysis: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-blue-400" />
                 <h2 className="text-xl font-bold text-white tracking-tight">
-                  Second-Opinion AI Medical Imaging Assistant
+                  Diagnostic Imaging Assistant
                 </h2>
               </div>
               <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-                NEXUS-Q synthesizes diagnostic medical scans with patient clinical notes to
-                detect abnormalities, map exact anatomical regions, and compute confidence
-                metrics with strict anti-hallucination guardrails.
+                TetrixAI assists physicians by correlating diagnostic medical scans with clinical patient
+                notes to highlight regions of interest and evaluate confidence metrics.
               </p>
             </div>
             <Badge variant="info" className="px-3 py-1 font-semibold text-xs whitespace-nowrap">
-              Gemini 2.0 Multimodal
+              Clinical Copilot
             </Badge>
           </div>
         </div>

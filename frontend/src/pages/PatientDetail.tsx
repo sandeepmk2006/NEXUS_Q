@@ -220,7 +220,7 @@ const PatientDetail: React.FC = () => {
               </h3>
               <div className="space-y-2">
                 <p className="text-xs text-slate-400">
-                  Total multimodal scans analyzed by NEXUS-Q AI copilot:
+                  Total multimodal scans analyzed by TetrixAI:
                 </p>
                 <div className="text-3xl font-bold text-blue-400">{analyses.length}</div>
                 <p className="text-xs text-slate-500">
@@ -295,7 +295,7 @@ const PatientDetail: React.FC = () => {
                 <ScanLine className="w-12 h-12 mx-auto opacity-30 text-slate-400" />
                 <p className="text-base font-medium text-slate-300">No scans on file for this patient</p>
                 <p className="text-xs max-w-sm mx-auto">
-                  Upload an X-ray, CT, MRI, or pathology scan to analyze with NEXUS-Q.
+                  Upload an X-ray, CT, MRI, or pathology scan to analyze with TetrixAI.
                 </p>
                 <Button
                   variant="primary"

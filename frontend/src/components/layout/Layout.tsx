@@ -67,8 +67,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
           <Stethoscope className="w-5 h-5 text-white" />
         </div>
         <div>
-          <span className="text-lg font-bold text-white tracking-tight">NEXUS</span>
-          <span className="text-lg font-bold text-blue-400 tracking-tight">-Q</span>
+          <span className="text-lg font-bold text-white tracking-tight">Tetrix</span>
+          <span className="text-lg font-bold text-blue-400 tracking-tight">AI</span>
         </div>
       </div>
 

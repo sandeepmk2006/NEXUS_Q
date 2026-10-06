@@ -42,7 +42,7 @@ app.get('/health', (_req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 NEXUS-Q Medical Server running on port ${PORT}`);
+  console.log(`🚀 TetrixAI Clinical Server running on port ${PORT}`);
 });
 
 export default app;

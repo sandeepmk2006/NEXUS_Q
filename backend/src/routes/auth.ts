@@ -73,6 +73,27 @@ router.post('/signin', async (req: AuthRequest, res: Response): Promise<void> =>
     }
 
     const decodedToken = await verifyTokenHelper(idToken);
+
+    // Auto-initialize root admin if email matches ADMIN_EMAIL
+    if (decodedToken.email && decodedToken.email.toLowerCase() === (process.env.ADMIN_EMAIL || '').toLowerCase()) {
+      const adminDoc = await db.collection('users').doc(decodedToken.uid).get();
+      if (!adminDoc.exists) {
+        const adminData = {
+          uid: decodedToken.uid,
+          email: decodedToken.email,
+          displayName: decodedToken.name || 'System Administrator',
+          photoURL: decodedToken.picture || null,
+          role: 'admin',
+          status: 'active',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        await db.collection('users').doc(decodedToken.uid).set(adminData);
+        res.json({ user: adminData });
+        return;
+      }
+    }
+
     const userDoc = await db.collection('users').doc(decodedToken.uid).get();
 
     if (!userDoc.exists) {

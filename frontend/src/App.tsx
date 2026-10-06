@@ -58,7 +58,7 @@ const App: React.FC = () => {
           duration: 4000,
         }}
       />
-      <Suspense fallback={<LoadingSpinner message="Initializing NEXUS-Q Platform..." />}>
+      <Suspense fallback={<LoadingSpinner message="Initializing TetrixAI..." />}>
         <Routes>
           {/* Public Authentication */}
           <Route

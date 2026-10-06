@@ -5,7 +5,7 @@ interface LoadingSpinnerProps {
   message?: string;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message = 'Loading NEXUS-Q...' }) => {
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message = 'Loading TetrixAI...' }) => {
   return (
     <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center p-4">
       <div className="relative flex items-center justify-center mb-6">
@@ -16,9 +16,9 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message = 'Loading NEXU
           <Loader2 className="w-20 h-20 text-blue-500/40 animate-spin" />
         </div>
       </div>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xl font-bold tracking-tight text-white">NEXUS</span>
-        <span className="text-xl font-bold tracking-tight text-blue-400">-Q</span>
+      <div className="flex items-center gap-1 mb-2">
+        <span className="text-xl font-bold tracking-tight text-white">Tetrix</span>
+        <span className="text-xl font-bold tracking-tight text-blue-400">AI</span>
       </div>
       <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">{message}</p>
     </div>

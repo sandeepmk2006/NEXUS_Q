@@ -1,11 +1,12 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { getAuth, Auth } from 'firebase-admin/auth';
+import { appDb } from '../services/db';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-let db: Firestore;
+let rawDb: Firestore | null = null;
 let auth: Auth;
 
 if (!getApps().length) {
@@ -19,15 +20,16 @@ if (!getApps().length) {
     initializeApp({
       credential: cert(serviceAccount),
     });
+    rawDb = getFirestore();
   } else {
-    // Initialize default for development/cloud environments
     initializeApp({
-      projectId: process.env.FIREBASE_PROJECT_ID || 'nexusq-medical',
+      projectId: process.env.FIREBASE_PROJECT_ID || 'door-bell-bf626',
     });
   }
 }
 
-db = getFirestore();
 auth = getAuth();
 
-export { db, auth };
+// Export resilient db that falls back gracefully
+export const db = (rawDb || appDb) as any;
+export { auth };
