@@ -18,11 +18,11 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally without redirect loops
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !window.location.pathname.includes('/signin')) {
       auth.signOut();
       window.location.href = '/signin';
     }

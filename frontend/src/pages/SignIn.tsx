@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { signInWithPopup } from 'firebase/auth';
-import { Stethoscope, ArrowRight } from 'lucide-react';
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { Stethoscope, ArrowRight, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { auth, googleProvider } from '../config/firebase';
 import api from '../config/api';
@@ -38,13 +38,75 @@ const SignIn: React.FC = () => {
     phone: '',
   });
 
+  // Check for redirect result on page mount
+  useEffect(() => {
+    let isMounted = true;
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (!isMounted || !result || !result.user) return;
+        setLoading(true);
+        const idToken = await result.user.getIdToken();
+
+        // Check if registration was pending
+        const pending = sessionStorage.getItem('tetrix_pending_signup');
+        if (pending) {
+          sessionStorage.removeItem('tetrix_pending_signup');
+          const regData = JSON.parse(pending);
+          try {
+            const res = await api.post('/auth/register', {
+              idToken,
+              displayName: result.user.displayName || 'Doctor',
+              ...regData,
+            });
+            setUser(res.data.user);
+            toast.success('Doctor account created successfully.');
+            navigate('/dashboard', { replace: true });
+            return;
+          } catch (regErr: any) {
+            toast.error(regErr.response?.data?.error || 'Registration failed.');
+          }
+        }
+
+        // Standard Sign In
+        try {
+          const res = await api.post('/auth/signin', { idToken });
+          setUser(res.data.user);
+          toast.success(`Welcome, Dr. ${res.data.user.displayName || res.data.user.email}`);
+          navigate(res.data.user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
+        } catch (backendErr: any) {
+          if (backendErr.response?.data?.needsRegistration) {
+            toast('No doctor profile found. Please complete the Sign Up tab.', { icon: 'ℹ️' });
+            setTab('signup');
+          } else {
+            toast.error(backendErr.response?.data?.error || 'Unable to authenticate with server.');
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Redirect auth check:', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, setUser]);
+
   const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSignupForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Google Login Handler
-  const handleGoogleLogin = async () => {
+  // Google Login Handler (Popup with auto-fallback to Redirect)
+  const handleGoogleLogin = async (useRedirectMode = false) => {
     setLoading(true);
+    if (useRedirectMode) {
+      toast('Redirecting to Google...', { icon: '🔄' });
+      await signInWithRedirect(auth, googleProvider);
+      return;
+    }
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
@@ -55,7 +117,9 @@ const SignIn: React.FC = () => {
 
         setUser(userData);
         toast.success(`Welcome, Dr. ${userData.displayName || userData.email}`);
-        const destination = (location.state as any)?.from?.pathname || (userData.role === 'admin' ? '/admin' : '/dashboard');
+        const destination =
+          (location.state as any)?.from?.pathname ||
+          (userData.role === 'admin' ? '/admin' : '/dashboard');
         navigate(destination, { replace: true });
       } catch (backendErr: any) {
         if (backendErr.response?.data?.needsRegistration) {
@@ -66,19 +130,18 @@ const SignIn: React.FC = () => {
         }
       }
     } catch (firebaseErr: any) {
-      if (firebaseErr.code === 'auth/popup-closed-by-user') {
-        toast.error('Sign in popup was closed.');
-      } else if (firebaseErr.code === 'auth/cancelled-popup-request') {
-        // User opened multiple popups; silently ignore
-      } else {
-        toast.error(firebaseErr.message || 'Google authentication error.');
+      if (firebaseErr.code === 'auth/popup-blocked' || firebaseErr.code === 'auth/popup-closed-by-user') {
+        toast('Popup was blocked by browser. Switching to redirect sign-in...', { icon: '🔄' });
+        await signInWithRedirect(auth, googleProvider);
+        return;
       }
+      toast.error(firebaseErr.message || 'Google authentication error.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Google Doctor Sign Up Handler
+  // Google Doctor Sign Up Handler (Popup with auto-fallback to Redirect)
   const handleDoctorSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,11 +173,21 @@ const SignIn: React.FC = () => {
       toast.success('Doctor account created successfully.');
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
-        toast.error('Sign up popup was closed.');
-      } else {
-        toast.error(err.response?.data?.error || err.message || 'Registration failed.');
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+        sessionStorage.setItem(
+          'tetrix_pending_signup',
+          JSON.stringify({
+            specialization: signupForm.specialization,
+            licenseNumber: signupForm.licenseNumber.trim(),
+            hospital: signupForm.hospital.trim(),
+            phone: signupForm.phone.trim(),
+          })
+        );
+        toast('Popup blocked. Redirecting to Google to finish registration...', { icon: '🔄' });
+        await signInWithRedirect(auth, googleProvider);
+        return;
       }
+      toast.error(err.response?.data?.error || err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -180,7 +253,7 @@ const SignIn: React.FC = () => {
                 variant="primary"
                 size="lg"
                 loading={loading}
-                onClick={handleGoogleLogin}
+                onClick={() => handleGoogleLogin(false)}
                 className="w-full flex items-center justify-center gap-3 py-3 bg-blue-600 hover:bg-blue-500 text-sm font-semibold shadow-md"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -204,11 +277,20 @@ const SignIn: React.FC = () => {
                 <span>Continue with Google</span>
               </Button>
 
-              <div className="pt-2 text-center">
+              <div className="flex flex-col items-center gap-2 pt-1 text-center">
+                <button
+                  type="button"
+                  onClick={() => handleGoogleLogin(true)}
+                  className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  <span>Browser blocking popups? Sign in via Redirect</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setTab('signup')}
-                  className="text-xs text-slate-400 hover:text-blue-400 transition-colors"
+                  className="text-xs text-slate-400 hover:text-blue-400 transition-colors mt-1"
                 >
                   New doctor? Register here <ArrowRight className="inline w-3 h-3 ml-0.5" />
                 </button>
