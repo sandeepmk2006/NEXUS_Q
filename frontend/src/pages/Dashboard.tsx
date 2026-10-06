@@ -156,8 +156,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const endpoint = isAdmin ? '/admin/patients' : '/patients';
     api
-      .get<Patient[]>(endpoint)
-      .then((res) => setPatients(res.data))
+      .get<{ patients: Patient[] }>(endpoint)
+      .then((res) => setPatients(res.data.patients || []))
       .catch(() => toast.error('Failed to load patients.'))
       .finally(() => setLoadingPatients(false));
   }, [isAdmin]);
@@ -165,8 +165,8 @@ const Dashboard: React.FC = () => {
   /* ── Fetch analyses ── */
   useEffect(() => {
     api
-      .get<Analysis[]>('/analysis')
-      .then((res) => setAnalyses(res.data))
+      .get<{ analyses: Analysis[] }>('/analysis')
+      .then((res) => setAnalyses(res.data.analyses || []))
       .catch(() => toast.error('Failed to load analyses.'))
       .finally(() => setLoadingAnalyses(false));
   }, []);
