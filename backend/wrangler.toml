@@ -1,0 +1,11 @@
+name = "nexusq-backend"
+main = "dist/index.js"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "npm run build"
+cwd = "backend"
+
+[[services]]
+binding = "BACKEND"
+service = "nexusq-backend"
