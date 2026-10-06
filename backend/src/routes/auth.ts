@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
-import { db, auth } from '../config/firebase';
-import { authenticate, AuthRequest, requireAdmin } from '../middleware/auth';
+import { db } from '../config/firebase';
+import { authenticate, AuthRequest, requireAdmin, verifyTokenHelper } from '../middleware/auth';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.post('/register', async (req: AuthRequest, res: Response): Promise<void> 
     }
 
     // Verify the token
-    const decodedToken = await auth.verifyIdToken(idToken);
+    const decodedToken = await verifyTokenHelper(idToken);
     const { uid, email, name, picture } = decodedToken;
 
     if (!email) {
@@ -72,7 +72,7 @@ router.post('/signin', async (req: AuthRequest, res: Response): Promise<void> =>
       return;
     }
 
-    const decodedToken = await auth.verifyIdToken(idToken);
+    const decodedToken = await verifyTokenHelper(idToken);
     const userDoc = await db.collection('users').doc(decodedToken.uid).get();
 
     if (!userDoc.exists) {
@@ -145,7 +145,7 @@ router.post('/init-admin', async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    const decodedToken = await auth.verifyIdToken(idToken);
+    const decodedToken = await verifyTokenHelper(idToken);
     const { uid, email, name, picture } = decodedToken;
 
     if (email !== process.env.ADMIN_EMAIL) {
