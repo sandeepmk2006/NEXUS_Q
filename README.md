@@ -47,7 +47,7 @@ NEXUS-Q/
 | Auth | Firebase Authentication (Google OAuth) |
 | Database | Firebase Firestore |
 | Backend | Node.js, Express, TypeScript |
-| AI Engine | Google Gemini 2.0 Flash (multimodal) |
+| AI Engine | Google Gemini via `@google/generative-ai` (model set in `MODEL_NAME`, `backend/src/services/geminiService.ts`; currently `gemini-flash-lite-latest`) |
 | Deployment | Cloudflare Pages (frontend) + Cloudflare Workers (backend) |
 
 ---
@@ -105,27 +105,33 @@ curl -X POST http://localhost:5000/api/auth/init-admin \
 ## 🧠 AI Analysis Pipeline
 
 ```
-Medical Image → Base64 Encode → Gemini 2.0 Flash Multimodal
-                                        ↓
-                          System Prompt (Anti-hallucination rules)
-                                        ↓
-                          Clinical Notes + Patient History
-                                        ↓
-                     Structured JSON Response with:
-                     • Finding + Exact Location
-                     • Confidence Score (0-100%)
-                     • Supporting Evidence
-                     • Severity Level
-                     • Doctor Recommendations
-                                        ↓
-                              Saved to Firestore
+Scan (browser downsizes to <=1024px JPEG) -> POST /api/analysis/analyze
+        |
+        v
+Gemini multimodal call (JSON mode) = image + patient history + clinical notes
+        |
+        v
+Structured JSON: findings[] each with location text, boundingBox, confidence,
+                 evidenceSource, supportingEvidence, severity, recommendation
+        |
+        v
+Server-side validation (sanitizeFindings):
+  - drop findings with no valid image box AND no clinical-notes citation
+  - clamp confidence to 0-100, validate severity / box geometry
+  - poor/fair image quality -> confidence scaled down + warning
+        |
+        v
+Saved with the (downsized) image -> report page draws boxes over the scan
 ```
 
-### Anti-Hallucination Rules (enforced in prompt)
-1. Every finding must cite exact image region OR clinical notes
-2. Confidence levels are always realistic (never 100% without strong evidence)
-3. Poor-quality images trigger quality warnings
-4. Unsupported findings are explicitly prohibited
+### Anti-Hallucination Rules (prompt **and** code)
+1. Every finding must carry a bounding box (`[ymin, xmin, ymax, xmax]`, 0-1000 normalized) **or** cite the clinical notes. Findings with neither are discarded in code, and the report shows how many were dropped.
+2. Confidence is 0-100 per finding. On `poor` image quality it is multiplied by 0.6, on `fair` by 0.85, and a warning banner is shown.
+3. If the model output cannot be parsed, the report says so explicitly instead of presenting an empty (apparently clean) result.
+4. All output is phrased as suggestions to the doctor.
+
+### Localization
+Localization is **bounding boxes** predicted by Gemini, rendered as clickable overlays linked to each finding card. There is no pixel-level segmentation or Grad-CAM heatmap, and box accuracy depends on the model and is not clinically validated.
 
 ---
 
@@ -147,13 +153,35 @@ Medical Image → Base64 Encode → Gemini 2.0 Flash Multimodal
 
 | Criterion | Implementation |
 |-----------|---------------|
-| Abnormality detection | Gemini 2.0 Flash multimodal analysis |
-| Region localization | Exact anatomical coordinates in findings |
-| Multimodal (image + notes) | Clinical notes fused into Gemini prompt |
-| Confidence levels | 0-100% per finding, color-coded |
-| Evidence-backed findings | Every finding requires image/note citation |
-| Poor image handling | Image quality assessment in every analysis |
+| Abnormality detection | Gemini multimodal analysis (no custom-trained classifier) |
+| Region localization | Bounding box per finding, drawn over the scan |
+| Multimodal (image + notes) | Clinical notes, history and medications fused into the prompt; `evidenceSource` records which was used |
+| Confidence levels | 0-100% per finding, color-coded, reduced on poor image quality |
+| Evidence-backed findings | Unsupported findings are filtered out in code |
+| Poor image handling | Quality rating + confidence penalty + warning banner |
 | Doctor-helper framing | System prompt enforces suggestion language |
+
+## 🎯 Scope Note
+
+**Minimum viable (implemented):** upload -> multimodal Gemini analysis -> structured findings with confidence, evidence, bounding boxes -> annotated report; auth, patients, admin.
+
+**Stretch / not done:** pixel-level segmentation, heatmaps, DICOM support, a locally trained or fine-tuned model, quantitative evaluation on a labelled dataset.
+
+## 📦 External Resources Declared
+
+- Google Gemini API (pre-trained multimodal model) - all image reasoning
+- Firebase Authentication / Firestore (Firestore optional; falls back to a local `localdb.json` file)
+- Open-source libraries: Express, React, Vite, Tailwind, Zustand, Axios, multer
+- Test images: use any public chest X-ray set (e.g. the Kaggle "Chest X-Ray Images (Pneumonia)" dataset). No dataset is bundled and none was used for training.
+- Built with AI coding assistance (Claude Code / Antigravity); the team reviewed and is responsible for the code.
+
+## 🔁 Reproducing the Demo
+
+1. Complete Quick Start and sign in with Google.
+2. Add a patient (age, gender, history, medications).
+3. New Analysis -> choose the patient, upload a public chest X-ray, enter clinical notes (e.g. the sample below).
+4. Open the report: the scan shows numbered boxes, each linked to a finding card with confidence and evidence.
+5. Try a blurry or low-contrast image to see the quality warning and lowered confidence.
 
 ---
 
@@ -167,11 +195,14 @@ Medical Image → Base64 Encode → Gemini 2.0 Flash Multimodal
 ### Output
 ```json
 {
-  "imageQuality": "Good — adequate for diagnostic interpretation",
+  "imageQualityRating": "good",
+  "imageQuality": "Good - adequate for interpretation",
   "findings": [
     {
       "finding": "Irregular opacity with spiculated margins",
       "location": "Right upper lobe, perihilar region",
+      "boundingBox": [180, 560, 340, 720],
+      "evidenceSource": "both",
       "confidence": 78,
       "severity": "high",
       "supportingEvidence": "Image shows 2-3cm density in right upper lobe. Clinical history of smoking and weight loss raises malignancy concern.",

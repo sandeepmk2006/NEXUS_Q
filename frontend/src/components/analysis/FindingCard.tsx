@@ -5,6 +5,8 @@ import Badge from '../ui/Badge';
 export interface MedicalFinding {
   finding: string;
   location: string;
+  boundingBox?: [number, number, number, number] | null;
+  evidenceSource?: 'image' | 'clinical_notes' | 'both';
   confidence: number;
   severity: 'low' | 'moderate' | 'high' | 'critical';
   supportingEvidence: string;
@@ -14,6 +16,8 @@ export interface MedicalFinding {
 interface FindingCardProps {
   finding: MedicalFinding;
   index: number;
+  active?: boolean;
+  onSelect?: () => void;
 }
 
 const severityConfig: Record<
@@ -26,12 +30,13 @@ const severityConfig: Record<
   critical: { variant: 'danger', border: 'border-red-500/40' },
 };
 
-const FindingCard: React.FC<FindingCardProps> = ({ finding, index }) => {
+const FindingCard: React.FC<FindingCardProps> = ({ finding, index, active, onSelect }) => {
   const config = severityConfig[finding.severity] || severityConfig.moderate;
 
   return (
     <div
-      className={`bg-[#1e293b] border ${config.border} rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all hover:border-slate-600`}
+      onClick={onSelect}
+      className={`bg-[#1e293b] border ${config.border} ${active ? 'ring-2 ring-blue-500' : ''} rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all hover:border-slate-600 ${onSelect ? 'cursor-pointer' : ''}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-3 flex-1">
@@ -49,7 +54,10 @@ const FindingCard: React.FC<FindingCardProps> = ({ finding, index }) => {
           {/* Location Badge / Coordinates */}
           <div className="flex items-center gap-2 text-xs font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg w-fit">
             <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-            <span>Location: {finding.location}</span>
+            <span>
+              Location: {finding.location}
+              {!finding.boundingBox && ' (no image region - based on clinical notes)'}
+            </span>
           </div>
 
           {/* Supporting Evidence */}

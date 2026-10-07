@@ -26,3 +26,9 @@ coverage/
 HackNex 2026 - Internal Qualifier PS_removed.docx
 
 localdb.json
+
+# Local screenshots, test images, backups (not for the repo)
+/Screenshot*.png
+/*.jpg
+/*.docx
+*.bak

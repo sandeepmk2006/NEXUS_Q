@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
+import ImageOverlay from '../components/analysis/ImageOverlay';
 import FindingCard, { type MedicalFinding } from '../components/analysis/FindingCard';
 import api from '../config/api';
 
@@ -26,6 +27,7 @@ interface AnalysisData {
   doctorName?: string;
   imageType: string;
   imageName?: string;
+  imageDataUrl?: string | null;
   clinicalNotes?: string;
   findings?: string;
   status: string;
@@ -33,6 +35,9 @@ interface AnalysisData {
   analysis: {
     summary: string;
     imageQuality: string;
+    imageQualityRating?: string;
+    qualityWarning?: string | null;
+    droppedFindings?: number;
     overallAssessment: string;
     disclaimer: string;
     modelUsed: string;
@@ -48,6 +53,7 @@ const AnalysisReport: React.FC = () => {
   const [report, setReport] = useState<AnalysisData | null>(null);
   const [patient, setPatient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeFinding, setActiveFinding] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -177,15 +183,53 @@ const AnalysisReport: React.FC = () => {
 
             <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
               <span className="text-slate-500 font-medium block">Diagnostic Quality</span>
-              <span className="text-emerald-400 font-semibold text-sm">
-                {analysis?.imageQuality || 'Adequate'}
+              <span
+                className={`font-semibold text-sm capitalize ${
+                  analysis?.imageQualityRating === 'poor' || analysis?.imageQualityRating === 'fair'
+                    ? 'text-amber-400'
+                    : 'text-emerald-400'
+                }`}
+              >
+                {analysis?.imageQualityRating && analysis.imageQualityRating !== 'unknown'
+                  ? analysis.imageQualityRating
+                  : 'Unrated'}
               </span>
-              <span className="text-slate-400 block text-[11px] mt-0.5">
+              <span
+                className="text-slate-400 block text-[11px] mt-0.5 line-clamp-2"
+                title={analysis?.imageQuality}
+              >
+                {analysis?.imageQuality}
+              </span>
+              <span className="text-slate-500 block text-[11px]">
                 Latency: {(analysis?.processingTime / 1000).toFixed(1)}s
               </span>
             </div>
           </div>
         </div>
+
+        {/* Poor-quality warning */}
+        {analysis?.qualityWarning && (
+          <div className="bg-amber-950/30 border border-amber-700/40 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-200">
+            <AlertOctagon className="w-5 h-5 text-amber-400 flex-shrink-0" />
+            <p className="leading-relaxed">{analysis.qualityWarning}</p>
+          </div>
+        )}
+
+        {/* Annotated scan */}
+        {report.imageDataUrl && (
+          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <ScanLine className="w-4 h-4 text-blue-400" />
+              <span>Localized Findings (click a box or card to highlight)</span>
+            </div>
+            <ImageOverlay
+              imageUrl={report.imageDataUrl}
+              findings={analysis?.findings || []}
+              activeIndex={activeFinding}
+              onSelect={setActiveFinding}
+            />
+          </div>
+        )}
 
         {/* Clinical History & Symptoms */}
         <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 space-y-2">
@@ -230,18 +274,26 @@ const AnalysisReport: React.FC = () => {
           {analysis?.findings && analysis.findings.length > 0 ? (
             <div className="space-y-4">
               {analysis.findings.map((finding, idx) => (
-                <FindingCard key={idx} finding={finding} index={idx} />
+                <FindingCard
+                  key={idx}
+                  finding={finding}
+                  index={idx}
+                  active={activeFinding === idx}
+                  onSelect={() => setActiveFinding(activeFinding === idx ? null : idx)}
+                />
               ))}
             </div>
           ) : (
             <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-8 text-center text-slate-400 space-y-2">
               <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
               <p className="text-sm font-semibold text-slate-200">
-                No acute abnormalities identified
+                No evidence-supported findings
               </p>
               <p className="text-xs text-slate-400 max-w-md mx-auto">
-                No focal consolidation, acute fracture, pneumothorax, or abnormal mass lesion was
-                detected in the scanned fields.
+                Doctor, the model reported no findings that could be tied to an image region or the
+                clinical notes. This does not exclude pathology.
+                {!!analysis?.droppedFindings &&
+                  ` ${analysis.droppedFindings} unsupported finding(s) were discarded.`}
               </p>
             </div>
           )}

@@ -37,6 +37,23 @@ const MODALITIES = [
   'Other Medical Scan',
 ];
 
+/** Shrinks the scan to <=1024px JPEG: keeps the stored copy small and speeds up Gemini. Non-images pass through. */
+async function downscaleImage(file: File, maxDim = 1024): Promise<File> {
+  if (!file.type.startsWith('image/')) return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const blob: Blob | null = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
+    return blob ? new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : file;
+  } catch {
+    return file;
+  }
+}
+
 const NewAnalysis: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -112,7 +129,8 @@ const NewAnalysis: React.FC = () => {
     try {
       setAnalyzing(true);
       const formData = new FormData();
-      formData.append('image', file);
+      const upload = await downscaleImage(file);
+      formData.append('image', upload, upload.name);
       formData.append('patientId', selectedPatientId);
       formData.append('imageType', imageType);
       formData.append('clinicalNotes', clinicalNotes.trim());

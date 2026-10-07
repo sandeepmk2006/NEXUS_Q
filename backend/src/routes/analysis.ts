@@ -66,6 +66,8 @@ router.post('/analyze', requireDoctor, upload.single('image'), async (req: AuthR
       imageType: imageType || 'medical scan',
       imageName: req.file.originalname,
       imageSize: req.file.size,
+      // Client downsizes to <=1024px JPEG, so this stays small enough to store and overlay boxes on
+      imageDataUrl: req.file.size <= 900 * 1024 ? `data:${imageMimeType};base64,${imageBase64}` : null,
       clinicalNotes: clinicalNotes || '',
       findings: findings || '',
       analysis: analysisResult,
