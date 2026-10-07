@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { db } from '../config/firebase';
 import { authenticate, AuthRequest, requireDoctor } from '../middleware/auth';
-import { analyzemedicalImage } from '../services/geminiService';
+import { analyzemedicalImage, PriorAnalysis } from '../services/geminiService';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,17 +42,34 @@ router.post('/analyze', requireDoctor, upload.single('image'), async (req: AuthR
     const imageBase64 = req.file.buffer.toString('base64');
     const imageMimeType = req.file.mimetype;
 
+    // Earlier reports for the same patient, as short text summaries for comparison
+    const priorSnapshot = await db.collection('analyses').where('patientId', '==', patientId).get();
+    const priorAnalyses: PriorAnalysis[] = priorSnapshot.docs
+      .map((d: any) => d.data())
+      .filter((a: any) => a?.analysis)
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 3)
+      .map((a: any) => ({
+        date: String(a.createdAt).slice(0, 10),
+        imageType: a.imageType || 'scan',
+        summary: a.analysis.summary || '',
+        findings: (a.analysis.findings || []).map((f: any) => `${f.finding} (${f.location})`),
+      }));
+
     // Run AI analysis
     const analysisResult = await analyzemedicalImage({
       imageBase64,
       imageMimeType,
       clinicalNotes: clinicalNotes || '',
+      preliminaryFindings: findings || '',
+      priorAnalyses,
       imageType: imageType || 'medical scan',
       patientInfo: {
         age: patient.age,
         gender: patient.gender,
         medicalHistory: patient.medicalHistory,
         currentMedications: patient.currentMedications,
+        allergies: patient.allergies,
       },
     });
 

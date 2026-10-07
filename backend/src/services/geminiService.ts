@@ -7,16 +7,28 @@ export const MODEL_NAME = 'gemini-flash-lite-latest';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+export interface PriorAnalysis {
+  date: string;
+  imageType: string;
+  summary: string;
+  findings: string[];
+}
+
 interface AnalysisInput {
   imageBase64: string;
   imageMimeType: string;
   clinicalNotes: string;
+  /** The referring doctor's own preliminary impression (unverified) */
+  preliminaryFindings?: string;
+  /** Text summaries of this patient's earlier reports, newest first */
+  priorAnalyses?: PriorAnalysis[];
   imageType: string;
   patientInfo: {
     age: number;
     gender: string;
     medicalHistory: string;
     currentMedications: string[];
+    allergies?: string[];
   };
 }
 
@@ -120,6 +132,15 @@ function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean
   return { findings, dropped };
 }
 
+function formatPriorAnalyses(prior?: PriorAnalysis[]): string {
+  if (!prior?.length) return '- Previous reports for this patient: none on file';
+  const lines = prior.map(
+    (p, i) =>
+      `  ${i + 1}. ${p.date} (${p.imageType}): ${p.summary}${p.findings.length ? ` Findings: ${p.findings.join('; ')}.` : ' No findings reported.'}`
+  );
+  return `- Previous reports for this patient (TEXT SUMMARIES ONLY - you cannot see the earlier images). Mention a change over time ONLY if the current image shows it AND a report below supports the comparison; never invent a comparison:\n${lines.join('\n')}`;
+}
+
 export async function analyzemedicalImage(input: AnalysisInput): Promise<AnalysisResult> {
   const startTime = Date.now();
 
@@ -161,12 +182,17 @@ RESPONSE FORMAT (JSON):
   "overallAssessment": "Doctor-addressed overall assessment with appropriate clinical caution"
 }`;
 
+  const priorSection = formatPriorAnalyses(input.priorAnalyses);
+
   const userPrompt = `Please analyze this ${input.imageType} medical image for a ${input.patientInfo.age}-year-old ${input.patientInfo.gender} patient.
 
 Clinical Context:
 - Medical History: ${input.patientInfo.medicalHistory || 'Not provided'}
 - Current Medications: ${input.patientInfo.currentMedications?.join(', ') || 'None listed'}
+- Allergies: ${input.patientInfo.allergies?.join(', ') || 'None listed'}
 - Clinical Notes/Symptoms: ${input.clinicalNotes || 'Not provided'}
+- Referring doctor's preliminary impression (UNVERIFIED - do not repeat it unless the image supports it): ${input.preliminaryFindings?.trim() || 'Not provided'}
+${priorSection}
 
 Analyze the image systematically:
 1. Assess image quality and modality

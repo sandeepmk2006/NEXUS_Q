@@ -290,13 +290,13 @@ const AnalysisReport: React.FC = () => {
             <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-600 space-y-2">
               <CheckCircle2 className="w-10 h-10 text-emerald-700 mx-auto" />
               <p className="text-sm font-semibold text-slate-800">
-                No evidence-supported findings
+                {analysis?.droppedFindings ? 'No evidence-supported findings' : 'No abnormalities identified'}
               </p>
               <p className="text-xs text-slate-600 max-w-md mx-auto">
-                Doctor, the model reported no findings that could be tied to an image region or the
-                clinical notes. This does not exclude pathology.
-                {!!analysis?.droppedFindings &&
-                  ` ${analysis.droppedFindings} unsupported finding(s) were discarded.`}
+                {analysis?.droppedFindings
+                  ? `Doctor, ${analysis.droppedFindings} finding(s) were discarded because they could not be tied to an image region or the clinical notes.`
+                  : 'Doctor, the model found nothing it could tie to an image region or the clinical notes.'}{' '}
+                This does not exclude pathology.
               </p>
             </div>
           )}
