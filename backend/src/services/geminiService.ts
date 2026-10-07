@@ -47,7 +47,7 @@ export interface AnalysisResult {
 }
 
 const DEFAULT_DISCLAIMER =
-  'This AI analysis is intended as a decision support tool only and should not replace clinical judgment.';
+  'This analysis is provided by TetrixAI as a second opinion tool to assist physicians. It is not a definitive diagnosis and must be interpreted within the full clinical context.';
 
 type QualityRating = AnalysisResult['imageQualityRating'];
 
@@ -158,8 +158,7 @@ RESPONSE FORMAT (JSON):
       "recommendation": "Suggested clinical action for the physician"
     }
   ],
-  "overallAssessment": "Doctor-addressed overall assessment with appropriate clinical caution",
-  "disclaimer": "Standard medical AI disclaimer"
+  "overallAssessment": "Doctor-addressed overall assessment with appropriate clinical caution"
 }`;
 
   const userPrompt = `Please analyze this ${input.imageType} medical image for a ${input.patientInfo.age}-year-old ${input.patientInfo.gender} patient.
@@ -216,7 +215,7 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
       imageQualityRating: rating,
       qualityWarning: qualityWarningFor(rating),
       droppedFindings: dropped,
-      disclaimer: parsedResult.disclaimer || DEFAULT_DISCLAIMER,
+      disclaimer: DEFAULT_DISCLAIMER,
       rawResponse: rawText,
       modelUsed: MODEL_NAME,
       processingTime,

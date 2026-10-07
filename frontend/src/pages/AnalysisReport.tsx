@@ -46,6 +46,9 @@ interface AnalysisData {
   };
 }
 
+/** Reports saved before the rename may still say NEXUS-Q. */
+const rebrand = (text?: string) => text?.replace(/NEXUS[-_ ]?Q/gi, 'TetrixAI');
+
 const AnalysisReport: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -255,7 +258,7 @@ const AnalysisReport: React.FC = () => {
             </div>
           </div>
           <p className="text-sm text-slate-800 leading-relaxed font-medium">
-            {analysis?.summary}
+            {rebrand(analysis?.summary)}
           </p>
         </div>
 
@@ -307,7 +310,7 @@ const AnalysisReport: React.FC = () => {
               Comprehensive Physician Assessment
             </h3>
             <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
-              {analysis.overallAssessment}
+              {rebrand(analysis.overallAssessment)}
             </div>
           </div>
         )}
@@ -318,7 +321,7 @@ const AnalysisReport: React.FC = () => {
           <div className="space-y-1">
             <span className="font-bold text-red-700">Regulatory Medical Device Warning: </span>
             <p className="leading-relaxed">
-              {analysis?.disclaimer ||
+              {rebrand(analysis?.disclaimer) ||
                 'TetrixAI is an assistive clinical decision support tool for certified physicians. Final diagnostic decisions and patient interventions remain the responsibility of the attending physician.'}
             </p>
           </div>
