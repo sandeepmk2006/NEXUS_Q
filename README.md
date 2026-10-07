@@ -10,7 +10,7 @@
 
 ## 🩺 What We Built
 
-**TetrixAI** is a production-grade AI-powered medical imaging second-opinion platform. Doctors upload X-rays, CT scans, MRIs, or any medical image, provide clinical context, and receive structured AI analysis with:
+**TetrixAI** is an AI-powered medical imaging second-opinion platform. Doctors upload X-rays, CT scans, MRIs, or any medical image, provide clinical context, and receive structured AI analysis with:
 
 - **Precise lesion localization** — every finding points to an exact anatomical region
 - **Confidence levels** — 0–100% confidence scores, never false certainty
@@ -49,7 +49,7 @@ NEXUS_Q/
 | Database | Firebase Firestore |
 | Backend | Node.js, Express, TypeScript |
 | AI Engine | Google Gemini via `@google/generative-ai` (model set in `MODEL_NAME`, `backend/src/services/geminiService.ts`; currently `gemini-flash-lite-latest`) |
-| Deployment | Cloudflare Pages (frontend) + Cloudflare Workers (backend) |
+| Deployment | Cloudflare Pages (frontend) + any Node.js host (backend) |
 
 ---
 
@@ -239,10 +239,18 @@ White and blue clinical theme throughout. Each report shows the scan with number
 npm run build
 # Deploy dist/ to Cloudflare Pages
 
-# Backend → Cloudflare Workers (or any Node.js host)
-npm run build
-# Deploy with wrangler or your preferred host
+# Backend → any Node.js 18+ host (Render, Railway, a VM, ...)
+cd backend && npm run build && npm start
+# Set GEMINI_API_KEY, FRONTEND_URL and the FIREBASE_* variables on the host
 ```
+
+The backend is an Express server, so it needs a Node.js host rather than Cloudflare Workers. Without the `FIREBASE_*` credentials it stores data in a local `localdb.json` file, which is only suitable for demos because most hosts reset their disk on redeploy.
+
+## ⚠️ Known Limitations
+
+- Findings come from a general-purpose multimodal model, not a model trained or clinically validated for diagnosis. Boxes are approximate.
+- Without Firebase Admin credentials the server accepts Firebase ID tokens without verifying their signature (local development convenience). Configure the `FIREBASE_*` variables for any shared deployment.
+- Accuracy has not been measured on a labelled dataset.
 
 ---
 

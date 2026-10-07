@@ -161,6 +161,9 @@ CRITICAL RULES:
 8. If nothing abnormal is visible, return an empty findings array - do not invent findings
 9. Report ONE finding per distinct lesion or region, each with its own tight boundingBox. Never merge lesions from different areas or from both lungs/sides into a single finding or a single large box
 10. Keep severity consistent with your recommendation: if you advise urgent work-up, severity must be "high" or "critical"
+11. When you cite the clinical notes, quote the doctor's wording exactly. Never rephrase or reinterpret a symptom (for example, do not turn "blood vomiting" into "hemoptysis")
+12. Use the full severity range: reserve "critical" for immediately life-threatening findings. Confidence is how certain you are of THIS finding on THIS image; stay below 90 unless the finding is unmistakable, and lower it when the box or the diagnosis is uncertain
+13. supportingEvidence must describe what is visible - approximate size, shape, margins and density - not just restate the finding
 
 RESPONSE FORMAT (JSON):
 {
