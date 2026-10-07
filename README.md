@@ -126,8 +126,8 @@ Saved with the (downsized) image -> report page draws boxes over the scan
 ```
 
 ### Anti-Hallucination Rules (prompt **and** code)
-1. Every finding must carry a bounding box (`[ymin, xmin, ymax, xmax]`, 0-1000 normalized) **or** cite the clinical notes. Findings with neither are discarded in code, and the report shows how many were dropped.
-2. Confidence is 0-100 per finding. On `poor` image quality it is multiplied by 0.6, on `fair` by 0.85, and a warning banner is shown.
+1. A finding is asserted only if it has a bounding box (`[ymin, xmin, ymax, xmax]`, 0-1000 normalized) and supporting evidence. A claim backed only by the clinical notes is rewritten as *"Clinical notes suggest X, but it cannot be localized on the provided scan"* and listed separately. Anything else is discarded, and the report shows how many.
+2. Confidence is shown with its breakdown: `model confidence - image quality penalty` (poor 25, fair 10, unknown 5), capped at 95%. No single image justifies certainty. Poor or fair quality also shows a warning banner.
 3. If the model output cannot be parsed, the report says so explicitly instead of presenting an empty (apparently clean) result.
 4. All output is phrased as suggestions to the doctor.
 

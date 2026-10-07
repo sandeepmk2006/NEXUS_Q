@@ -8,6 +8,13 @@ export interface MedicalFinding {
   boundingBox?: [number, number, number, number] | null;
   evidenceSource?: 'image' | 'clinical_notes' | 'both';
   confidence: number;
+  confidenceBreakdown?: {
+    modelConfidence: number;
+    qualityPenalty: number;
+    ceiling: number;
+    final: number;
+    formula: string;
+  };
   severity: 'low' | 'moderate' | 'high' | 'critical';
   supportingEvidence: string;
   recommendation: string;
@@ -86,6 +93,22 @@ const FindingCard: React.FC<FindingCardProps> = ({ finding, index, active, onSel
         {/* Confidence Meter */}
         <div className="flex sm:flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-200 min-w-[90px]">
           <ConfidenceMeter confidence={finding.confidence} size="md" />
+          {finding.confidenceBreakdown && (
+            <dl className="mt-2 text-[11px] text-slate-600 space-y-0.5 w-full" title={finding.confidenceBreakdown.formula}>
+              <div className="flex justify-between gap-3">
+                <dt>Model</dt>
+                <dd className="tabular-nums">{finding.confidenceBreakdown.modelConfidence}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Image quality</dt>
+                <dd className="tabular-nums">-{finding.confidenceBreakdown.qualityPenalty}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Cap</dt>
+                <dd className="tabular-nums">{finding.confidenceBreakdown.ceiling}</dd>
+              </div>
+            </dl>
+          )}
         </div>
       </div>
     </div>

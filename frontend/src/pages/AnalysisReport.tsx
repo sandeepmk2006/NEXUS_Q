@@ -37,7 +37,9 @@ interface AnalysisData {
     imageQuality: string;
     imageQualityRating?: string;
     qualityWarning?: string | null;
+    comparisonCaveat?: string | null;
     droppedFindings?: number;
+    notLocalized?: { condition: string; statement: string; notesEvidence: string }[];
     overallAssessment: string;
     disclaimer: string;
     modelUsed: string;
@@ -220,6 +222,13 @@ const AnalysisReport: React.FC = () => {
           </div>
         )}
 
+        {analysis?.comparisonCaveat && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-800">
+            <AlertOctagon className="w-5 h-5 text-amber-700 flex-shrink-0" />
+            <p className="leading-relaxed">{analysis.comparisonCaveat}</p>
+          </div>
+        )}
+
         {/* Annotated scan */}
         {report.imageDataUrl && (
           <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
@@ -303,6 +312,21 @@ const AnalysisReport: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Claims from the notes that the scan could not confirm */}
+        {!!analysis?.notLocalized?.length && (
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+            <h3 className="text-sm font-semibold text-slate-800">Raised in the notes, not found on the scan</h3>
+            <ul className="space-y-2">
+              {analysis.notLocalized.map((c, i) => (
+                <li key={i} className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                  <p className="font-medium text-slate-800">{c.statement}</p>
+                  <p className="mt-1 text-slate-600">{c.notesEvidence}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Overall Physician-Faced Assessment */}
         {analysis?.overallAssessment && (

@@ -25,7 +25,7 @@ Create the patient first (Patients > Add patient) with the details below, then o
 ## 3. Expected result
 - Image quality rating is **poor** or **fair**.
 - An amber quality warning banner appears on the report.
-- Any finding has reduced confidence (poor quality scales confidence by 0.6, fair by 0.85).
+- Any finding shows an image-quality penalty in its confidence breakdown (poor: -25, fair: -10).
 - The assessment recommends repeating or re-acquiring the image.
 
 ## 4. Fails if

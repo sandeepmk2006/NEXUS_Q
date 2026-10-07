@@ -39,3 +39,7 @@ localdb.json
 /test-scenarios/**/*.jpeg
 /test-scenarios/**/*.png
 /test-scenarios/**/*.webp
+
+# Friend's reference project - never commit
+/Hacknex/
+/hacknex/

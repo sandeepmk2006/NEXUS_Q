@@ -39,9 +39,26 @@ export interface MedicalFinding {
   boundingBox: [number, number, number, number] | null;
   evidenceSource: 'image' | 'clinical_notes' | 'both';
   confidence: number;
+  confidenceBreakdown?: ConfidenceBreakdown;
   severity: 'low' | 'moderate' | 'high' | 'critical';
   supportingEvidence: string;
   recommendation: string;
+}
+
+/** Every term behind a finding's confidence, so a reviewer can reconstruct the number. */
+export interface ConfidenceBreakdown {
+  modelConfidence: number;
+  qualityPenalty: number;
+  ceiling: number;
+  final: number;
+  formula: string;
+}
+
+/** A claim the clinical notes raise that could not be tied to a region of the scan. */
+export interface NotLocalizedClaim {
+  condition: string;
+  statement: string;
+  notesEvidence: string;
 }
 
 export interface AnalysisResult {
@@ -52,6 +69,9 @@ export interface AnalysisResult {
   imageQualityRating: 'excellent' | 'good' | 'fair' | 'poor' | 'unknown';
   qualityWarning: string | null;
   droppedFindings: number;
+  notLocalized: NotLocalizedClaim[];
+  /** Set when the report compares with earlier reports, which the model only sees as text */
+  comparisonCaveat: string | null;
   disclaimer: string;
   rawResponse: string;
   modelUsed: string;
@@ -69,6 +89,22 @@ function normalizeQuality(rating: unknown, description: unknown): QualityRating 
     if (text.includes(r)) return r;
   }
   return 'unknown';
+}
+
+const CHANGE_WORDS =
+  /\b(improv\w*|resolv\w*|interval|clearing|cleared|progress\w*|worsen\w*|increas\w*|decreas\w*|enlarg\w*|unchanged|stable|new (lesion|finding|opacity)|compared (to|with)|previous(ly)?|prior)\b/i;
+
+/** Flags reports that talk about change over time, since the model never sees earlier images. */
+function comparisonCaveatFor(prior: PriorAnalysis[] | undefined, parsed: any, findings: MedicalFinding[]): string | null {
+  if (!prior?.length) return null;
+  const text = [
+    parsed?.summary,
+    parsed?.overallAssessment,
+    ...findings.flatMap((f) => [f.finding, f.supportingEvidence, f.recommendation]),
+  ].join(' ');
+  return CHANGE_WORDS.test(text)
+    ? 'This report refers to earlier reports. The AI only had their text summaries and could not see the earlier images, so any statement about change over time is unverified. Please compare the images directly.'
+    : null;
 }
 
 function qualityWarningFor(rating: QualityRating): string | null {
@@ -91,14 +127,32 @@ function normalizeBox(box: unknown): [number, number, number, number] | null {
   return [ymin, xmin, ymax, xmax];
 }
 
+const CONFIDENCE_CEILING = 95;
+const QUALITY_PENALTY: Record<QualityRating, number> = { excellent: 0, good: 0, unknown: 5, fair: 10, poor: 25 };
+
+function computeConfidence(modelConfidence: number, rating: QualityRating): ConfidenceBreakdown {
+  const model = Math.round(Math.min(100, Math.max(0, modelConfidence)));
+  const qualityPenalty = QUALITY_PENALTY[rating];
+  const final = Math.round(Math.min(CONFIDENCE_CEILING, Math.max(0, model - qualityPenalty)));
+  return {
+    modelConfidence: model,
+    qualityPenalty,
+    ceiling: CONFIDENCE_CEILING,
+    final,
+    formula: `${model} (model) - ${qualityPenalty} (${rating} image quality) = ${model - qualityPenalty}, capped to [0, ${CONFIDENCE_CEILING}] = ${final}`,
+  };
+}
+
 /**
- * Enforces the anti-hallucination rule in code: a finding survives only if it has a
- * valid image region, or cites the clinical notes as its evidence.
+ * Enforces the anti-hallucination rule in code. A finding is asserted only when it
+ * has a valid image region and evidence. A claim that only the clinical notes support
+ * is not asserted: it is rewritten as "notes suggest X, but it cannot be localized".
+ * Anything else is dropped and counted.
  */
 function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean) {
   const list = Array.isArray(raw) ? raw : [];
-  const penalty = rating === 'poor' ? 0.6 : rating === 'fair' ? 0.85 : 1;
   const findings: MedicalFinding[] = [];
+  const notLocalized: NotLocalizedClaim[] = [];
   let dropped = 0;
 
   for (const f of list) {
@@ -107,29 +161,43 @@ function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean
     const citesNotes = hasNotes && (f?.evidenceSource === 'clinical_notes' || f?.evidenceSource === 'both');
     const hasLocationText = typeof f?.location === 'string' && f.location.trim().length > 0;
 
-    const supported = (boundingBox !== null && !!evidence) || (citesNotes && !!evidence && hasLocationText);
-    if (!f?.finding || !supported) {
+    if (!f?.finding || !evidence) {
       dropped++;
       continue;
     }
 
+    if (!boundingBox) {
+      if (citesNotes) {
+        const condition = String(f.finding);
+        notLocalized.push({
+          condition,
+          statement: `Clinical notes suggest ${condition.charAt(0).toLowerCase()}${condition.slice(1)}, but it cannot be localized on the provided scan.`,
+          notesEvidence: evidence,
+        });
+      } else {
+        dropped++;
+      }
+      continue;
+    }
+
     const rawConf = Number(f.confidence);
-    const confidence = Number.isFinite(rawConf) ? Math.min(100, Math.max(0, rawConf)) : 0;
+    const breakdown = computeConfidence(Number.isFinite(rawConf) ? rawConf : 0, rating);
     const severity = ['low', 'moderate', 'high', 'critical'].includes(f.severity) ? f.severity : 'moderate';
 
     findings.push({
       finding: String(f.finding),
-      location: hasLocationText ? String(f.location) : 'Not specified (clinical notes only)',
+      location: hasLocationText ? String(f.location) : 'See highlighted region',
       boundingBox,
-      evidenceSource: boundingBox ? (citesNotes ? 'both' : 'image') : 'clinical_notes',
-      confidence: Math.round(confidence * penalty),
+      evidenceSource: citesNotes ? 'both' : 'image',
+      confidence: breakdown.final,
+      confidenceBreakdown: breakdown,
       severity,
       supportingEvidence: evidence,
       recommendation: String(f.recommendation || ''),
     });
   }
 
-  return { findings, dropped };
+  return { findings, notLocalized, dropped };
 }
 
 function formatPriorAnalyses(prior?: PriorAnalysis[]): string {
@@ -166,6 +234,7 @@ CRITICAL RULES:
 13. supportingEvidence must describe what is visible - approximate size, shape, margins and density - not just restate the finding
 14. Do not state absolute measurements (cm, mm) - the image has no scale. Describe size relatively (for example "occupies roughly a third of the lower zone")
 15. Check the patient's allergies before recommending any treatment. Never suggest a drug or contrast agent the patient is allergic to, and when you suggest antibiotics or contrast imaging, state the relevant listed allergy and ask the doctor to choose an alternative
+16. You CANNOT see earlier images, so you cannot judge change over time. Never use words such as improved, improving, resolving, resolved, clearing, interval change, worsened, progressed, increased, decreased, new, unchanged or stable. Do not infer change from the clinical notes either (for example from "fever settled"). Describe only what THIS image shows, you may state what an earlier report listed (quoting its date), and you must tell the doctor to compare the images directly
 
 RESPONSE FORMAT (JSON):
 {
@@ -237,7 +306,7 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
 
   if (parsedResult) {
     const rating = normalizeQuality(parsedResult.imageQualityRating, parsedResult.imageQuality);
-    const { findings, dropped } = sanitizeFindings(parsedResult.findings, rating, !!input.clinicalNotes?.trim());
+    const { findings, notLocalized, dropped } = sanitizeFindings(parsedResult.findings, rating, !!input.clinicalNotes?.trim());
     return {
       summary: parsedResult.summary || 'Analysis complete',
       findings,
@@ -245,7 +314,9 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
       imageQuality: parsedResult.imageQuality || 'Unknown',
       imageQualityRating: rating,
       qualityWarning: qualityWarningFor(rating),
+      comparisonCaveat: comparisonCaveatFor(input.priorAnalyses, parsedResult, findings),
       droppedFindings: dropped,
+      notLocalized,
       disclaimer: DEFAULT_DISCLAIMER,
       rawResponse: rawText,
       modelUsed: MODEL_NAME,
@@ -261,7 +332,9 @@ Remember: Point to specific regions. Unsupported findings are hallucinations.`;
     imageQuality: 'Unknown',
     imageQualityRating: 'unknown',
     qualityWarning: 'Structured parsing failed; no findings could be verified.',
+    comparisonCaveat: null,
     droppedFindings: 0,
+    notLocalized: [],
     disclaimer: DEFAULT_DISCLAIMER,
     rawResponse: rawText,
     modelUsed: MODEL_NAME,

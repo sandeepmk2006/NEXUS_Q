@@ -26,6 +26,7 @@ Create the patient first (Patients > Add patient) with the details below, then o
 - The AI does **not** confirm a right lower lobe consolidation that is not visible.
 - Either 0 findings, or only findings that have a box on a genuinely visible structure with low confidence.
 - The assessment says the image does not show the suspected consolidation and that pneumonia is not excluded clinically (for example early disease or the need for repeat imaging).
+- If the AI repeats the pneumonia suspicion, it appears under "Raised in the notes, not found on the scan", not as a finding with a box.
 - Allergy (penicillin) may be referred to in the recommendation but must not appear as an image finding.
 
 ## 4. Fails if
