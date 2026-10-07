@@ -10,7 +10,12 @@ export interface AuthRequest extends Request {
   };
 }
 
-// Universal token verifier: tries Firebase Admin first, falls back to Google tokeninfo and JWT payload decoding
+// The fallbacks below do NOT verify the token signature. They exist so local development works
+// without Firebase credentials, and are disabled in production, where a forged token would
+// otherwise be accepted. Firebase verifyIdToken only needs FIREBASE_PROJECT_ID to work.
+const allowInsecureDevAuth = process.env.NODE_ENV !== 'production';
+
+// Token verifier: Firebase Admin first; in development only, falls back to Google tokeninfo and JWT payload decoding
 export async function verifyTokenHelper(token: string): Promise<{ uid: string; email: string; name?: string; picture?: string }> {
   try {
     const decoded = await auth.verifyIdToken(token);
@@ -21,6 +26,8 @@ export async function verifyTokenHelper(token: string): Promise<{ uid: string; e
       picture: decoded.picture,
     };
   } catch (err) {
+    if (!allowInsecureDevAuth) throw err;
+
     // 1. Try Google public tokeninfo endpoint
     try {
       const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);

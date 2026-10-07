@@ -22,11 +22,22 @@ Run 1 before 5, and use the same patient for both.
 
 | # | Date | Findings | Max confidence | Quality | Pass / Fail |
 |---|------|----------|----------------|---------|-------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | 2026-10-07 | 1 boxed: right lower zone consolidation (correct side) | 88% | good | Pass |
+| 2 | Not yet run with the scenario 2 image | | | | Pending |
+| 3 | 2026-10-07 | 0 (lungs clear despite pneumonia notes) | n/a | good | Pass |
+| 4 | 2026-10-07 | 0 (no invented findings), quality warning shown | n/a | fair | Pass |
+| 5 | 2026-10-07 | 1 boxed: right lower zone opacity, no change claimed | 88% | good | Pass |
+
+### What the runs showed and what was fixed
+
+| Scenario | First run | Fix | Rerun |
+|----------|-----------|-----|-------|
+| 1 | Invented a "6 cm" size and ignored the penicillin allergy | Prompt forbids absolute measurements and requires allergy checks before treatment advice | Relative size; penicillin and sulfonamide allergies named |
+| 3 | Reported "symptoms without radiographic correlate" as a boxed finding, with the box on the wrong side | Absence-type titles moved out of findings in code; left/right box check with a 30-point penalty | No boxed findings |
+| 4 | Rated a blurred, noisy image "good" | Rating capped by problems the model's own description admits | Rated fair with a warning |
+| 5 | Claimed "improvement" and "resolving pneumonia" from an identical image | Change-over-time wording forbidden; caveat shown if it appears anyway | Describes the current image only and cites the earlier report by date |
+
+Earlier, before these scenario files existed, a normal chest X-ray of the user's own returned 0 findings. Scenario 2 still needs a run with its own image.
 
 ## Notes
 

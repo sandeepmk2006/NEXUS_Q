@@ -3,7 +3,7 @@
 > The GitHub repository is named `NEXUS_Q`; the product is called **TetrixAI**.
 > HackNex 2026 | Problem Statement HNX26PSI05 | Team Submission
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://nexus-q.pages.dev)
+**Live demo:** _add the Cloudflare Pages URL here after deploying (see Deployment)._
 [![GitHub](https://img.shields.io/badge/GitHub-NEXUS__Q-black)](https://github.com/sandeepmk2006/NEXUS_Q)
 
 ---
@@ -49,7 +49,7 @@ NEXUS_Q/
 | Database | Firebase Firestore |
 | Backend | Node.js, Express, TypeScript |
 | AI Engine | Google Gemini via `@google/generative-ai` (model set in `MODEL_NAME`, `backend/src/services/geminiService.ts`; currently `gemini-flash-lite-latest`) |
-| Deployment | Cloudflare Pages (frontend) + any Node.js host (backend) |
+| Deployment | Cloudflare Pages (frontend) + Render (backend), both auto-deploy from GitHub |
 
 ---
 
@@ -232,24 +232,61 @@ White and blue clinical theme throughout. Each report shows the scan with number
 
 ---
 
-## 🌐 Deployment (Cloudflare)
+## 🌐 Deployment
 
-```bash
-# Frontend → Cloudflare Pages
-npm run build
-# Deploy dist/ to Cloudflare Pages
+Both halves redeploy automatically on every `git push` to `main`. There is no manual deploy step.
 
-# Backend → any Node.js 18+ host (Render, Railway, a VM, ...)
-cd backend && npm run build && npm start
-# Set GEMINI_API_KEY, FRONTEND_URL and the FIREBASE_* variables on the host
+```
+GitHub (main) ──push──► Cloudflare Pages  → frontend (React build)
+              └─push──► Render (free)     → backend (Express API)
 ```
 
-The backend is an Express server, so it needs a Node.js host rather than Cloudflare Workers. Without the `FIREBASE_*` credentials it stores data in a local `localdb.json` file, which is only suitable for demos because most hosts reset their disk on redeploy.
+The backend is an Express server, so it runs on Render rather than Cloudflare Workers. `render.yaml` describes it.
+
+### 1. Backend on Render (one-time setup)
+1. In Render, choose **New → Blueprint** and select this repository. Render reads `render.yaml`.
+2. Fill in the environment variables it asks for:
+
+| Variable | Value |
+|----------|-------|
+| `GEMINI_API_KEY` | Your Gemini API key |
+| `FRONTEND_URL` | The Cloudflare Pages URL from step 2, e.g. `https://tetrixai.pages.dev` (comma-separate several) |
+| `FIREBASE_PROJECT_ID` | Same as `VITE_FIREBASE_PROJECT_ID`. **Required**: production only accepts properly verified sign-in tokens |
+| `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | Optional service account. With them, data is stored in Firestore. Without them it goes to `localdb.json`, which Render wipes on every redeploy or restart |
+| `ADMIN_EMAIL`, `ADMIN_INIT_SECRET` | For creating the admin account |
+
+3. Once it is live, open `https://<your-service>.onrender.com/health` and check that it returns `{"status":"ok"}`.
+
+### 2. Frontend on Cloudflare Pages (one-time setup)
+1. In Cloudflare, go to **Workers & Pages → Create → Pages → Connect to Git** and select this repository.
+2. Build settings:
+
+| Setting | Value |
+|---------|-------|
+| Root directory | `frontend` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+3. Environment variables (Production):
+
+| Variable | Value |
+|----------|-------|
+| `VITE_API_URL` | `https://<your-service>.onrender.com/api` |
+| `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID` | From your Firebase web app config |
+
+`frontend/public/_redirects` sends every route to `index.html` so links like `/analysis/<id>` work on refresh. `frontend/.node-version` pins Node 22.
+
+### 3. Firebase (one-time)
+In the Firebase console, open **Authentication → Settings → Authorized domains** and add your `*.pages.dev` domain. Google sign-in fails on the live site without this.
+
+### Things to know
+- Render's free plan sleeps after about 15 minutes idle; the first request then takes around 30-60 seconds. Open the site a minute before a demo.
+- After changing an environment variable in Cloudflare Pages, trigger a new deployment. `VITE_*` values are baked in at build time.
 
 ## ⚠️ Known Limitations
 
 - Findings come from a general-purpose multimodal model, not a model trained or clinically validated for diagnosis. Boxes are approximate.
-- Without Firebase Admin credentials the server accepts Firebase ID tokens without verifying their signature (local development convenience). Configure the `FIREBASE_*` variables for any shared deployment.
+- In local development (`NODE_ENV` not `production`) the server also accepts sign-in tokens without verifying their signature, so it runs without Firebase setup. Production disables this and verifies every token against `FIREBASE_PROJECT_ID`.
 - Accuracy has not been measured on a labelled dataset.
 
 ---
