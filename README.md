@@ -3,7 +3,7 @@
 > The GitHub repository is named `NEXUS_Q`; the product is called **TetrixAI**.
 > HackNex 2026 | Problem Statement HNX26PSI05 | Team Submission
 
-**Live demo:** _add the Render frontend URL here after deploying (see Deployment)._
+**Live demo:** https://tetrixai.tech
 [![GitHub](https://img.shields.io/badge/GitHub-NEXUS__Q-black)](https://github.com/sandeepmk2006/NEXUS_Q)
 
 ---
@@ -250,7 +250,7 @@ In Render, choose **New → Blueprint** and select this repository. Render reads
 | Variable | Value |
 |----------|-------|
 | `GEMINI_API_KEY` | Your Gemini API key |
-| `FRONTEND_URL` | The frontend's URL, e.g. `https://tetrixai-frontend.onrender.com` (comma-separate several) |
+| `FRONTEND_URL` | Every address the frontend is served from, comma-separated, e.g. `https://tetrixai.tech,https://www.tetrixai.tech,https://tetrixai-frontend.onrender.com` |
 | `FIREBASE_PROJECT_ID` | Same as `VITE_FIREBASE_PROJECT_ID`. **Required**: production only accepts properly verified sign-in tokens |
 | `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | Optional service account. With them, data is stored in Firestore. Without them it goes to `localdb.json`, which Render wipes on every redeploy or restart |
 | `ADMIN_EMAIL`, `ADMIN_INIT_SECRET` | For creating the admin account |
