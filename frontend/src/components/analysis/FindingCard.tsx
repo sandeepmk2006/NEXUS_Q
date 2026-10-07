@@ -11,10 +11,12 @@ export interface MedicalFinding {
   confidenceBreakdown?: {
     modelConfidence: number;
     qualityPenalty: number;
+    lateralityPenalty?: number;
     ceiling: number;
     final: number;
     formula: string;
   };
+  lateralityWarning?: string | null;
   severity: 'low' | 'moderate' | 'high' | 'critical';
   supportingEvidence: string;
   recommendation: string;
@@ -67,6 +69,12 @@ const FindingCard: React.FC<FindingCardProps> = ({ finding, index, active, onSel
             </span>
           </div>
 
+          {finding.lateralityWarning && (
+            <p className="text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {finding.lateralityWarning}
+            </p>
+          )}
+
           {/* Supporting Evidence */}
           <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700">
@@ -103,6 +111,12 @@ const FindingCard: React.FC<FindingCardProps> = ({ finding, index, active, onSel
                 <dt>Image quality</dt>
                 <dd className="tabular-nums">-{finding.confidenceBreakdown.qualityPenalty}</dd>
               </div>
+              {!!finding.confidenceBreakdown.lateralityPenalty && (
+                <div className="flex justify-between gap-3 text-red-700">
+                  <dt>Side mismatch</dt>
+                  <dd className="tabular-nums">-{finding.confidenceBreakdown.lateralityPenalty}</dd>
+                </div>
+              )}
               <div className="flex justify-between gap-3">
                 <dt>Cap</dt>
                 <dd className="tabular-nums">{finding.confidenceBreakdown.ceiling}</dd>

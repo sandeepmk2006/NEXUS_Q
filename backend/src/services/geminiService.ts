@@ -40,6 +40,8 @@ export interface MedicalFinding {
   evidenceSource: 'image' | 'clinical_notes' | 'both';
   confidence: number;
   confidenceBreakdown?: ConfidenceBreakdown;
+  /** Set when the box sits on the opposite side to the one the text names */
+  lateralityWarning?: string | null;
   severity: 'low' | 'moderate' | 'high' | 'critical';
   supportingEvidence: string;
   recommendation: string;
@@ -49,6 +51,7 @@ export interface MedicalFinding {
 export interface ConfidenceBreakdown {
   modelConfidence: number;
   qualityPenalty: number;
+  lateralityPenalty: number;
   ceiling: number;
   final: number;
   formula: string;
@@ -92,7 +95,7 @@ function normalizeQuality(rating: unknown, description: unknown): QualityRating 
 }
 
 const CHANGE_WORDS =
-  /\b(improv\w*|resolv\w*|interval|clearing|cleared|progress\w*|worsen\w*|increas\w*|decreas\w*|enlarg\w*|unchanged|stable|new (lesion|finding|opacity)|compared (to|with)|previous(ly)?|prior)\b/i;
+  /\b(improv\w*|resolv\w*|interval|clearing|cleared|progress\w*|worsen\w*|increas\w*|decreas\w*|enlarg\w*|unchanged|stable|new (lesion|finding|opacity))\b/i;
 
 /** Flags reports that talk about change over time, since the model never sees earlier images. */
 function comparisonCaveatFor(prior: PriorAnalysis[] | undefined, parsed: any, findings: MedicalFinding[]): string | null {
@@ -130,17 +133,45 @@ function normalizeBox(box: unknown): [number, number, number, number] | null {
 const CONFIDENCE_CEILING = 95;
 const QUALITY_PENALTY: Record<QualityRating, number> = { excellent: 0, good: 0, unknown: 5, fair: 10, poor: 25 };
 
-function computeConfidence(modelConfidence: number, rating: QualityRating): ConfidenceBreakdown {
+const LATERALITY_PENALTY = 30;
+
+function computeConfidence(modelConfidence: number, rating: QualityRating, sideMismatch: boolean): ConfidenceBreakdown {
   const model = Math.round(Math.min(100, Math.max(0, modelConfidence)));
   const qualityPenalty = QUALITY_PENALTY[rating];
-  const final = Math.round(Math.min(CONFIDENCE_CEILING, Math.max(0, model - qualityPenalty)));
+  const lateralityPenalty = sideMismatch ? LATERALITY_PENALTY : 0;
+  const raw = model - qualityPenalty - lateralityPenalty;
+  const final = Math.round(Math.min(CONFIDENCE_CEILING, Math.max(0, raw)));
   return {
     modelConfidence: model,
     qualityPenalty,
+    lateralityPenalty,
     ceiling: CONFIDENCE_CEILING,
     final,
-    formula: `${model} (model) - ${qualityPenalty} (${rating} image quality) = ${model - qualityPenalty}, capped to [0, ${CONFIDENCE_CEILING}] = ${final}`,
+    formula: `${model} (model) - ${qualityPenalty} (${rating} image quality) - ${lateralityPenalty} (side mismatch) = ${raw}, capped to [0, ${CONFIDENCE_CEILING}] = ${final}`,
   };
+}
+
+/** Titles that describe the absence of an abnormality rather than an abnormality. */
+const NEGATIVE_FINDING =
+  /^(no|normal|absent|unremarkable|clear)\b|without (a |any )?(radiographic|imaging|visible) correlate|no radiographic|not (seen|visible|identified|demonstrated) on/i;
+
+/**
+ * On a standard PA/AP chest film the patient's right is on the image's left.
+ * Returns a warning when the text names one side and the box sits clearly on the other.
+ */
+function lateralityMismatch(text: string, box: [number, number, number, number]): string | null {
+  const t = text.toLowerCase();
+  const right = /\bright\b/.test(t);
+  const left = /\bleft\b/.test(t);
+  if (right === left) return null;
+  const centre = (box[1] + box[3]) / 2;
+  if (right && centre > 550) {
+    return "The text says right, but the box is on the image's right, which is the patient's left on a standard chest film. Verify the side.";
+  }
+  if (left && centre < 450) {
+    return "The text says left, but the box is on the image's left, which is the patient's right on a standard chest film. Verify the side.";
+  }
+  return null;
 }
 
 /**
@@ -166,6 +197,16 @@ function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean
       continue;
     }
 
+    if (NEGATIVE_FINDING.test(String(f.finding))) {
+      // "Symptoms without radiographic correlate" is not an abnormality; never box it.
+      notLocalized.push({
+        condition: String(f.finding),
+        statement: `${String(f.finding).replace(/\.$/, '')}: the scan does not show a matching abnormality.`,
+        notesEvidence: evidence,
+      });
+      continue;
+    }
+
     if (!boundingBox) {
       if (citesNotes) {
         const condition = String(f.finding);
@@ -181,7 +222,8 @@ function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean
     }
 
     const rawConf = Number(f.confidence);
-    const breakdown = computeConfidence(Number.isFinite(rawConf) ? rawConf : 0, rating);
+    const lateralityWarning = lateralityMismatch(`${f.finding} ${f.location ?? ''}`, boundingBox);
+    const breakdown = computeConfidence(Number.isFinite(rawConf) ? rawConf : 0, rating, !!lateralityWarning);
     const severity = ['low', 'moderate', 'high', 'critical'].includes(f.severity) ? f.severity : 'moderate';
 
     findings.push({
@@ -191,6 +233,7 @@ function sanitizeFindings(raw: unknown, rating: QualityRating, hasNotes: boolean
       evidenceSource: citesNotes ? 'both' : 'image',
       confidence: breakdown.final,
       confidenceBreakdown: breakdown,
+      lateralityWarning,
       severity,
       supportingEvidence: evidence,
       recommendation: String(f.recommendation || ''),
@@ -226,7 +269,7 @@ CRITICAL RULES:
 5. A finding with no image location AND no clinical evidence = hallucination — do not include it
 6. Flag image quality issues that may affect analysis reliability; if quality is poor, lower your confidence values accordingly
 7. "boundingBox" is the tight box around the abnormality as integers normalized to 0-1000 in the order [ymin, xmin, ymax, xmax] (0,0 = top-left of the image). Use null ONLY when evidenceSource is "clinical_notes"
-8. If nothing abnormal is visible, return an empty findings array - do not invent findings
+8. If nothing abnormal is visible, return an empty findings array - do not invent findings. "findings" holds ONLY abnormalities you can see. When the notes suggest a condition that the image does not show, say so in summary/overallAssessment; never create a finding such as "symptoms without radiographic correlate"
 9. Report ONE finding per distinct lesion or region, each with its own tight boundingBox. Never merge lesions from different areas or from both lungs/sides into a single finding or a single large box
 10. Keep severity consistent with your recommendation: if you advise urgent work-up, severity must be "high" or "critical"
 11. When you cite the clinical notes, quote the doctor's wording exactly. Never rephrase or reinterpret a symptom (for example, do not turn "blood vomiting" into "hemoptysis")
@@ -235,6 +278,7 @@ CRITICAL RULES:
 14. Do not state absolute measurements (cm, mm) - the image has no scale. Describe size relatively (for example "occupies roughly a third of the lower zone")
 15. Check the patient's allergies before recommending any treatment. Never suggest a drug or contrast agent the patient is allergic to, and when you suggest antibiotics or contrast imaging, state the relevant listed allergy and ask the doctor to choose an alternative
 16. You CANNOT see earlier images, so you cannot judge change over time. Never use words such as improved, improving, resolving, resolved, clearing, interval change, worsened, progressed, increased, decreased, new, unchanged or stable. Do not infer change from the clinical notes either (for example from "fever settled"). Describe only what THIS image shows, you may state what an earlier report listed (quoting its date), and you must tell the doctor to compare the images directly
+17. Laterality: on a standard PA chest radiograph the patient's RIGHT side is on the LEFT of the image (check for an L/R marker). A finding described as right-sided must have its boundingBox on the left half of the image, and vice versa
 
 RESPONSE FORMAT (JSON):
 {
