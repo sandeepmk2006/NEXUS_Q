@@ -86,12 +86,55 @@ const DEFAULT_DISCLAIMER =
 
 type QualityRating = AnalysisResult['imageQualityRating'];
 
-function normalizeQuality(rating: unknown, description: unknown): QualityRating {
-  const text = `${rating ?? ''} ${description ?? ''}`.toLowerCase();
-  for (const r of ['poor', 'fair', 'excellent', 'good'] as const) {
-    if (text.includes(r)) return r;
+const RATING_ORDER: QualityRating[] = ['poor', 'fair', 'unknown', 'good', 'excellent'];
+
+/** Problems the model may describe while still rating the image "good". */
+const QUALITY_ISSUES: [string, RegExp][] = [
+  ['noise', /\b(noise|noisy|grainy|graininess|speckl\w*)\b/],
+  ['blur', /\b(blur\w*|motion artifact\w*|unsharp|out of focus)\b/],
+  ['contrast', /\b(low contrast|poor contrast|washed out|faint)\b/],
+  ['exposure', /\b(under-?exposed|over-?exposed|under-?penetrat\w*|over-?penetrat\w*)\b/],
+  ['artifact', /\b(artifact\w*|artefact\w*)\b/],
+  ['cropping', /\b(cropped|cut off|incomplete field|partially excluded)\b/],
+  ['rotation', /\b(rotat\w*|tilt\w*)\b/],
+];
+
+/** A match negated or softened earlier in the same clause is not a problem ("no rotation or motion blur", "minor rotation"). */
+const SOFTENER = /\b(no|not|without|minimal|minor|mild|slight|negligible|insignificant)\b[^.;:,]{0,40}$/;
+
+function describedIssues(description: string): string[] {
+  const text = description.toLowerCase();
+  const found: string[] = [];
+  for (const [name, re] of QUALITY_ISSUES) {
+    const global = new RegExp(re.source, 'g');
+    let m: RegExpExecArray | null;
+    while ((m = global.exec(text))) {
+      const before = text.slice(Math.max(0, m.index - 40), m.index);
+      if (!SOFTENER.test(before)) {
+        found.push(name);
+        break;
+      }
+    }
   }
-  return 'unknown';
+  return found;
+}
+
+/**
+ * The model's one-word rating, capped by the problems its own description admits:
+ * one problem caps it at "fair", two or more at "poor".
+ */
+function normalizeQuality(rating: unknown, description: unknown): QualityRating {
+  const text = `${rating ?? ''}`.toLowerCase();
+  let base: QualityRating = 'unknown';
+  for (const r of ['poor', 'fair', 'excellent', 'good'] as const) {
+    if (text.includes(r)) {
+      base = r;
+      break;
+    }
+  }
+  const issues = describedIssues(String(description ?? ''));
+  const cap: QualityRating = issues.length >= 2 ? 'poor' : issues.length === 1 ? 'fair' : 'excellent';
+  return RATING_ORDER.indexOf(base) <= RATING_ORDER.indexOf(cap) ? base : cap;
 }
 
 const CHANGE_WORDS =
@@ -267,7 +310,7 @@ CRITICAL RULES:
 3. ALWAYS include confidence levels (0-100%) — do not state everything with certainty
 4. ALWAYS frame responses as suggestions to the doctor: "Doctor, consider examining..." not "The patient has..."
 5. A finding with no image location AND no clinical evidence = hallucination — do not include it
-6. Flag image quality issues that may affect analysis reliability; if quality is poor, lower your confidence values accordingly
+6. Flag image quality issues that may affect analysis reliability; if quality is poor, lower your confidence values accordingly. imageQualityRating must agree with imageQuality: an image with visible noise, blur, low contrast, exposure problems or artifacts is never "good" or "excellent"; with several such problems it is "poor", and then recommend re-acquiring the image
 7. "boundingBox" is the tight box around the abnormality as integers normalized to 0-1000 in the order [ymin, xmin, ymax, xmax] (0,0 = top-left of the image). Use null ONLY when evidenceSource is "clinical_notes"
 8. If nothing abnormal is visible, return an empty findings array - do not invent findings. "findings" holds ONLY abnormalities you can see. When the notes suggest a condition that the image does not show, say so in summary/overallAssessment; never create a finding such as "symptoms without radiographic correlate"
 9. Report ONE finding per distinct lesion or region, each with its own tight boundingBox. Never merge lesions from different areas or from both lungs/sides into a single finding or a single large box
