@@ -72,7 +72,7 @@ const Register: React.FC = () => {
       });
 
       setUser(response.data.user);
-      toast.success('Doctor account created successfully! Welcome to NEXUS-Q.');
+      toast.success('Doctor account created successfully! Welcome to TetrixAI.');
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Registration failed. Please try again.');
@@ -89,8 +89,8 @@ const Register: React.FC = () => {
             <Stethoscope className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">NEXUS</span>
-            <span className="text-xl font-bold tracking-tight text-blue-600">-Q</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">Tetrix</span>
+            <span className="text-xl font-bold tracking-tight text-blue-600">AI</span>
           </div>
         </div>
         <h2 className="text-center text-2xl font-bold tracking-tight text-slate-900">

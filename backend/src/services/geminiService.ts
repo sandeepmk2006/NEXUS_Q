@@ -127,7 +127,7 @@ export async function analyzemedicalImage(input: AnalysisInput): Promise<Analysi
     generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
   });
 
-  const systemPrompt = `You are NEXUS-Q, an advanced AI medical imaging assistant. You are a SECOND OPINION TOOL — never a replacement for clinical judgment. Your role is to assist physicians by identifying and localizing potential abnormalities in medical images.
+  const systemPrompt = `You are TetrixAI, an advanced AI medical imaging assistant. You are a SECOND OPINION TOOL — never a replacement for clinical judgment. Your role is to assist physicians by identifying and localizing potential abnormalities in medical images.
 
 CRITICAL RULES:
 1. Every finding MUST be backed by specific image evidence (location) AND/OR clinical notes

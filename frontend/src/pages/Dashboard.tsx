@@ -20,7 +20,7 @@ import { useAuthStore } from '../store/authStore';
 
 /* ─── Types ──────────────────────────────────────────────── */
 interface Patient {
-  _id: string;
+  id: string;
   name: string;
   age: number;
   gender: string;
@@ -30,7 +30,7 @@ interface Patient {
 }
 
 interface Analysis {
-  _id: string;
+  id: string;
   patientName: string;
   patientId: string;
   imageType: string;
@@ -318,7 +318,7 @@ const Dashboard: React.FC = () => {
                   <tbody className="divide-y divide-slate-200">
                     {recentPatients.map((p) => (
                       <tr
-                        key={p._id}
+                        key={p.id}
                         className="hover:bg-slate-100 transition-colors"
                       >
                         <td className="px-5 py-3.5 font-medium text-slate-800">
@@ -338,7 +338,7 @@ const Dashboard: React.FC = () => {
                         </td>
                         <td className="px-3 py-3.5">
                           <button
-                            onClick={() => navigate(`/patients/${p._id}`)}
+                            onClick={() => navigate(`/patients/${p.id}`)}
                             className="p-1 rounded-lg text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition-colors"
                             aria-label={`View ${p.name}`}
                           >
@@ -381,9 +381,9 @@ const Dashboard: React.FC = () => {
                 <div className="space-y-3">
                   {recentAnalyses.map((a) => (
                     <div
-                      key={a._id}
+                      key={a.id}
                       className="flex items-start gap-3 p-3 rounded-xl bg-slate-100 hover:bg-slate-100 transition-colors cursor-pointer group"
-                      onClick={() => navigate(`/analysis/${a._id}`)}
+                      onClick={() => navigate(`/analysis/${a.id}`)}
                     >
                       <div className="p-2 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
                         <ScanLine className="w-4 h-4" />

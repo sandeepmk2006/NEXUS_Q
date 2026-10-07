@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-NEXUS-Q (backend logs call it "TetrixAI"): an AI second-opinion platform for medical images. Doctors upload an X-ray/CT/MRI with clinical context; the backend sends it to Gemini and returns structured findings (anatomical location, 0–100 confidence, evidence). Prompt rules that must be preserved: every finding must be backed by image evidence or clinical notes (anti-hallucination), and output is doctor-directed ("Doctor, consider examining…"), never a diagnosis of the patient.
+TetrixAI (the GitHub repo is named NEXUS_Q): an AI second-opinion platform for medical images. Doctors upload an X-ray/CT/MRI with clinical context; the backend sends it to Gemini and returns structured findings (anatomical location, 0–100 confidence, evidence). Prompt rules that must be preserved: every finding must be backed by image evidence or clinical notes (anti-hallucination), and output is doctor-directed ("Doctor, consider examining…"), never a diagnosis of the patient.
 
 ## Commands
 

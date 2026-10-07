@@ -1,5 +1,6 @@
-# NEXUS-Q: Multimodal Medical Image Intelligence Platform
+# TetrixAI: Multimodal Medical Image Intelligence Platform
 
+> The GitHub repository is named `NEXUS_Q`; the product is called **TetrixAI**.
 > HackNex 2026 | Problem Statement HNX26PSI05 | Team Submission
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://nexus-q.pages.dev)
@@ -9,7 +10,7 @@
 
 ## 🩺 What We Built
 
-**NEXUS-Q** is a production-grade AI-powered medical imaging second-opinion platform. Doctors upload X-rays, CT scans, MRIs, or any medical image, provide clinical context, and receive structured AI analysis with:
+**TetrixAI** is a production-grade AI-powered medical imaging second-opinion platform. Doctors upload X-rays, CT scans, MRIs, or any medical image, provide clinical context, and receive structured AI analysis with:
 
 - **Precise lesion localization** — every finding points to an exact anatomical region
 - **Confidence levels** — 0–100% confidence scores, never false certainty
@@ -22,7 +23,7 @@
 ## 🏗️ Architecture
 
 ```
-NEXUS-Q/
+NEXUS_Q/
 ├── frontend/          # React 18 + TypeScript + TailwindCSS
 │   └── src/
 │       ├── pages/     # SignIn, Register, Dashboard, Patients, Analysis, Admin
