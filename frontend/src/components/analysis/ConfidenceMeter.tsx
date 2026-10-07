@@ -18,17 +18,17 @@ const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, size = 'm
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (clamped / 100) * circumference;
 
-  let colorClass = 'stroke-emerald-400';
-  let textColorClass = 'text-emerald-400';
+  let colorClass = 'stroke-emerald-500';
+  let textColorClass = 'text-emerald-700';
   let badgeLabel = 'High';
 
   if (clamped < 50) {
-    colorClass = 'stroke-red-400';
-    textColorClass = 'text-red-400';
+    colorClass = 'stroke-red-500';
+    textColorClass = 'text-red-700';
     badgeLabel = 'Low';
   } else if (clamped < 75) {
-    colorClass = 'stroke-amber-400';
-    textColorClass = 'text-amber-400';
+    colorClass = 'stroke-amber-500';
+    textColorClass = 'text-amber-700';
     badgeLabel = 'Moderate';
   }
 
@@ -48,7 +48,7 @@ const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, size = 'm
             stroke="currentColor"
             strokeWidth={sizeConfig.stroke}
             fill="transparent"
-            className="text-slate-700/50"
+            className="text-slate-200"
           />
           {/* Progress circle */}
           <circle
@@ -69,7 +69,7 @@ const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, size = 'm
         </div>
       </div>
       {sizeConfig.label && (
-        <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1">
+        <span className="text-[10px] text-slate-600 font-medium mt-1">
           {badgeLabel}
         </span>
       )}

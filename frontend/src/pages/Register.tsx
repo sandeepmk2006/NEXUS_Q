@@ -82,35 +82,35 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f3f6fb] text-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl">
         <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-900/10">
             <Stethoscope className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="text-xl font-bold tracking-tight text-white">NEXUS</span>
-            <span className="text-xl font-bold tracking-tight text-blue-400">-Q</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">NEXUS</span>
+            <span className="text-xl font-bold tracking-tight text-blue-600">-Q</span>
           </div>
         </div>
-        <h2 className="text-center text-2xl font-bold tracking-tight text-slate-100">
+        <h2 className="text-center text-2xl font-bold tracking-tight text-slate-900">
           Physician Verification & Setup
         </h2>
-        <p className="mt-1 text-center text-xs text-slate-400">
+        <p className="mt-1 text-center text-xs text-slate-600">
           Complete your clinical profile to initialize your patient diagnostic workspace
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-xl">
-        <div className="bg-[#1e293b] py-8 px-6 shadow-2xl rounded-2xl border border-slate-700/60 sm:px-10">
+        <div className="bg-white py-8 px-6 shadow-sm rounded-2xl border border-slate-200 sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Display Name */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Full Legal Name / Clinical Title
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -120,28 +120,28 @@ const Register: React.FC = () => {
                   onChange={handleChange}
                   placeholder="e.g. Dr. Jane Smith, MD"
                   required
-                  className="w-full pl-10 pr-3 py-2.5 bg-slate-900/70 border border-slate-700 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500"
+                  className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
                 />
               </div>
             </div>
 
             {/* Specialization */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Clinical Specialization
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600">
                   <Stethoscope className="w-4 h-4" />
                 </div>
                 <select
                   name="specialization"
                   value={formData.specialization}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-3 py-2.5 bg-slate-900/70 border border-slate-700 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {SPECIALIZATIONS.map((spec) => (
-                    <option key={spec} value={spec} className="bg-slate-900">
+                    <option key={spec} value={spec} className="bg-slate-50">
                       {spec}
                     </option>
                   ))}
@@ -152,11 +152,11 @@ const Register: React.FC = () => {
             {/* License Number & Hospital Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Medical License / Reg No.
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600">
                     <Award className="w-4 h-4" />
                   </div>
                   <input
@@ -166,17 +166,17 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     placeholder="e.g. MD-982314-X"
                     required
-                    className="w-full pl-10 pr-3 py-2.5 bg-slate-900/70 border border-slate-700 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500"
+                    className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Hospital / Institution
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600">
                     <Building2 className="w-4 h-4" />
                   </div>
                   <input
@@ -186,7 +186,7 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     placeholder="e.g. Metro General Hospital"
                     required
-                    className="w-full pl-10 pr-3 py-2.5 bg-slate-900/70 border border-slate-700 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500"
+                    className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
                   />
                 </div>
               </div>
@@ -194,11 +194,11 @@ const Register: React.FC = () => {
 
             {/* Contact Phone */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Official Department / Phone
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600">
                   <Phone className="w-4 h-4" />
                 </div>
                 <input
@@ -207,7 +207,7 @@ const Register: React.FC = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="e.g. +1 (555) 234-5678"
-                  className="w-full pl-10 pr-3 py-2.5 bg-slate-900/70 border border-slate-700 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500"
+                  className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
                 />
               </div>
             </div>
@@ -218,7 +218,7 @@ const Register: React.FC = () => {
                 variant="primary"
                 size="lg"
                 loading={submitting}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 font-semibold"
+                className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 font-semibold"
               >
                 <span>Complete Registration & Open Workspace</span>
                 <ArrowRight className="w-4 h-4" />

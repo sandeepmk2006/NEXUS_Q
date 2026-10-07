@@ -42,7 +42,7 @@ NEXUS-Q/
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18, TypeScript, TailwindCSS v4, Vite |
+| Frontend | React 19, TypeScript, TailwindCSS v4, Vite (white and blue clinical theme, IBM Plex Sans) |
 | State | Zustand (with persistence) |
 | Auth | Firebase Authentication (Google OAuth) |
 | Database | Firebase Firestore |
@@ -135,6 +135,10 @@ Localization is **bounding boxes** predicted by Gemini, rendered as clickable ov
 
 ---
 
+## 🖼️ Interface
+
+White and blue clinical theme throughout. Each report shows the scan with numbered, severity-coloured boxes linked to the finding cards below it, plus a quality banner when the image is poor.
+
 ## 👥 Role-Based Access Control
 
 | Feature | Doctor | Admin |
@@ -165,7 +169,7 @@ Localization is **bounding boxes** predicted by Gemini, rendered as clickable ov
 
 **Minimum viable (implemented):** upload -> multimodal Gemini analysis -> structured findings with confidence, evidence, bounding boxes -> annotated report; auth, patients, admin.
 
-**Stretch / not done:** pixel-level segmentation, heatmaps, DICOM support, a locally trained or fine-tuned model, quantitative evaluation on a labelled dataset.
+**Stretch / not done:** automated tests, pixel-level segmentation, heatmaps, DICOM support, a locally trained or fine-tuned model, quantitative evaluation on a labelled dataset.
 
 ## 📦 External Resources Declared
 

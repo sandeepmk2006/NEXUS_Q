@@ -95,7 +95,7 @@ const PatientDetail: React.FC = () => {
   if (!patient) {
     return (
       <Layout title="Patient Chart">
-        <div className="p-8 text-center text-slate-400">
+        <div className="p-8 text-center text-slate-600">
           <p>Patient record not found.</p>
           <Button variant="secondary" className="mt-4" onClick={() => navigate('/patients')}>
             Back to Roster
@@ -112,7 +112,7 @@ const PatientDetail: React.FC = () => {
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate('/patients')}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Patients</span>
@@ -130,15 +130,15 @@ const PatientDetail: React.FC = () => {
         </div>
 
         {/* Patient Header Card */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-800 flex items-center justify-center text-white text-2xl font-bold shadow-sm shadow-blue-900/10">
                 {patient.name.charAt(0)}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-100">{patient.name}</h2>
-                <div className="flex flex-wrap items-center gap-2.5 mt-1 text-xs text-slate-400">
+                <h2 className="text-2xl font-bold text-slate-900">{patient.name}</h2>
+                <div className="flex flex-wrap items-center gap-2.5 mt-1 text-xs text-slate-600">
                   <span>{patient.age} years old</span>
                   <span>•</span>
                   <span>{patient.gender}</span>
@@ -148,17 +148,17 @@ const PatientDetail: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t md:border-t-0 md:border-l border-slate-700/60 pt-4 md:pt-0 md:pl-6 text-xs text-slate-400">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6 text-xs text-slate-600">
               <div>
                 <span className="block text-slate-500 font-medium">Attending Physician</span>
-                <span className="text-slate-200 font-semibold text-sm">
+                <span className="text-slate-800 font-semibold text-sm">
                   {patient.assignedDoctorName || 'Assigned Staff'}
                 </span>
               </div>
-              <div className="hidden sm:block w-px h-8 bg-slate-700" />
+              <div className="hidden sm:block w-px h-8 bg-slate-100" />
               <div>
                 <span className="block text-slate-500 font-medium">Record Created</span>
-                <span className="text-slate-200">
+                <span className="text-slate-800">
                   {new Date(patient.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -166,7 +166,7 @@ const PatientDetail: React.FC = () => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex gap-2 border-b border-slate-700/60 mt-6 -mb-2">
+          <div className="flex gap-2 border-b border-slate-200 mt-6 -mb-2">
             {[
               { id: 'overview', label: 'Patient Overview', icon: User },
               { id: 'history', label: 'Clinical History', icon: FileText },
@@ -179,8 +179,8 @@ const PatientDetail: React.FC = () => {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 pb-3 px-3 text-xs font-semibold border-b-2 transition-all ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-400'
-                      : 'border-transparent text-slate-400 hover:text-slate-200'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -194,35 +194,35 @@ const PatientDetail: React.FC = () => {
         {/* Tab 1: Overview */}
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-slate-800">
                 Contact & Residential Details
               </h3>
               <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3 text-slate-300">
-                  <Phone className="w-4 h-4 text-slate-400" />
+                <div className="flex items-center gap-3 text-slate-700">
+                  <Phone className="w-4 h-4 text-slate-600" />
                   <span>{patient.phone || 'No phone recorded'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-300">
-                  <Mail className="w-4 h-4 text-slate-400" />
+                <div className="flex items-center gap-3 text-slate-700">
+                  <Mail className="w-4 h-4 text-slate-600" />
                   <span>{patient.email || 'No email recorded'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-300">
-                  <MapPin className="w-4 h-4 text-slate-400" />
+                <div className="flex items-center gap-3 text-slate-700">
+                  <MapPin className="w-4 h-4 text-slate-600" />
                   <span>{patient.address || 'No address provided'}</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-slate-800">
                 Diagnostics Summary
               </h3>
               <div className="space-y-2">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Total multimodal scans analyzed by TetrixAI:
                 </p>
-                <div className="text-3xl font-bold text-blue-400">{analyses.length}</div>
+                <div className="text-3xl font-bold text-blue-600">{analyses.length}</div>
                 <p className="text-xs text-slate-500">
                   Last imaging procedure:{' '}
                   {analyses[0]
@@ -237,20 +237,20 @@ const PatientDetail: React.FC = () => {
         {/* Tab 2: Clinical History */}
         {activeTab === 'history' && (
           <div className="space-y-6">
-            <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-400" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
+              <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-blue-600" />
                 Medical Baseline & Prior Conditions
               </h3>
-              <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
                 {patient.medicalHistory || 'No previous medical history recorded.'}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-3">
-                <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-400" />
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
+                <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-700" />
                   Known Allergies & Contraindications
                 </h3>
                 {patient.allergies && patient.allergies.length > 0 ? (
@@ -266,9 +266,9 @@ const PatientDetail: React.FC = () => {
                 )}
               </div>
 
-              <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-3">
-                <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                  <Pill className="w-4 h-4 text-emerald-400" />
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
+                <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                  <Pill className="w-4 h-4 text-emerald-700" />
                   Current Active Medications
                 </h3>
                 {patient.currentMedications && patient.currentMedications.length > 0 ? (
@@ -291,9 +291,9 @@ const PatientDetail: React.FC = () => {
         {activeTab === 'scans' && (
           <div className="space-y-4">
             {analyses.length === 0 ? (
-              <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-12 text-center text-slate-500 space-y-3">
-                <ScanLine className="w-12 h-12 mx-auto opacity-30 text-slate-400" />
-                <p className="text-base font-medium text-slate-300">No scans on file for this patient</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 space-y-3">
+                <ScanLine className="w-12 h-12 mx-auto opacity-30 text-slate-600" />
+                <p className="text-base font-medium text-slate-700">No scans on file for this patient</p>
                 <p className="text-xs max-w-sm mx-auto">
                   Upload an X-ray, CT, MRI, or pathology scan to analyze with TetrixAI.
                 </p>
@@ -312,7 +312,7 @@ const PatientDetail: React.FC = () => {
                   <div
                     key={scan.id}
                     onClick={() => navigate(`/analysis/${scan.id}`)}
-                    className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 hover:border-slate-600 transition-all cursor-pointer shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-blue-300 transition-all cursor-pointer shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
                   >
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-3">
@@ -332,7 +332,7 @@ const PatientDetail: React.FC = () => {
                         </Badge>
                       </div>
 
-                      <p className="text-sm font-semibold text-slate-200">
+                      <p className="text-sm font-semibold text-slate-800">
                         {scan.analysis.summary}
                       </p>
 
@@ -340,7 +340,7 @@ const PatientDetail: React.FC = () => {
                         {scan.analysis.findings?.map((f, fi) => (
                           <span
                             key={fi}
-                            className="text-xs bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800 text-slate-300"
+                            className="text-xs bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 text-slate-700"
                           >
                             {f.finding} ({f.confidence}%)
                           </span>
@@ -349,7 +349,7 @@ const PatientDetail: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2 self-end md:self-center">
-                      <Button variant="ghost" size="sm" className="text-blue-400">
+                      <Button variant="ghost" size="sm" className="text-blue-600">
                         <span>View Detailed Report</span>
                         <ChevronRight className="w-4 h-4 ml-1" />
                       </Button>

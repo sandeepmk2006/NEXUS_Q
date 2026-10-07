@@ -50,9 +50,9 @@ const App: React.FC = () => {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#1e293b',
-            color: '#f8fafc',
-            border: '1px solid #334155',
+            background: '#ffffff',
+            color: '#0f172a',
+            border: '1px solid #cbd9ee',
             fontSize: '13px',
           },
           duration: 4000,

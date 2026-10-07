@@ -12,7 +12,7 @@ const colorFor = (severity: MedicalFinding['severity']) =>
 
 /** Draws each finding's normalized (0-1000) [ymin, xmin, ymax, xmax] box over the scan. */
 const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, findings, activeIndex, onSelect }) => (
-  <div className="relative inline-block max-w-full bg-black rounded-xl overflow-hidden border border-slate-700">
+  <div className="relative inline-block max-w-full bg-slate-900 rounded-lg overflow-hidden border border-slate-200">
     <img src={imageUrl} alt="Analyzed scan" className="block max-h-[520px] max-w-full" />
     {findings.map((f, i) => {
       if (!f.boundingBox) return null;

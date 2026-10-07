@@ -97,21 +97,20 @@ const StatCard: React.FC<StatCardProps> = ({
   color = 'blue',
 }) => {
   const colorMap: Record<string, string> = {
-    blue: 'bg-blue-500/15 text-blue-400',
-    emerald: 'bg-emerald-500/15 text-emerald-400',
-    violet: 'bg-violet-500/15 text-violet-400',
-    amber: 'bg-amber-500/15 text-amber-400',
+    blue: 'bg-blue-50 text-blue-600',
+    emerald: 'bg-emerald-50 text-emerald-700',
+    amber: 'bg-amber-50 text-amber-700',
   };
 
   return (
-    <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5">
+    <div className="bg-white border border-slate-200 rounded-2xl p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-slate-100">{value}</p>
+          <p className="text-xs text-slate-500 font-medium">{label}</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
           {trend && (
             <p className="mt-1 text-xs text-slate-500 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-emerald-400" />
+              <TrendingUp className="w-3 h-3 text-emerald-700" />
               {trend}
             </p>
           )}
@@ -128,7 +127,7 @@ const StatCard: React.FC<StatCardProps> = ({
 const TableSkeleton: React.FC = () => (
   <div className="space-y-3">
     {Array.from({ length: 5 }).map((_, i) => (
-      <div key={i} className="h-12 bg-slate-700/40 rounded-xl animate-pulse" />
+      <div key={i} className="h-12 bg-slate-100 rounded-xl animate-pulse" />
     ))}
   </div>
 );
@@ -192,11 +191,11 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold text-slate-100">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Welcome back, {user?.name?.split(' ')[0] ?? 'Doctor'}
               </h2>
               {isAdmin && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-violet-500/15 text-violet-400 ring-1 ring-violet-500/30 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 ring-1 ring-blue-500/30 text-xs font-medium">
                   <Shield className="w-3 h-3" />
                   Admin
                 </span>
@@ -232,7 +231,7 @@ const Dashboard: React.FC = () => {
               label="Total Doctors"
               value={adminStats.totalDoctors}
               icon={Stethoscope}
-              color="violet"
+              color="blue"
             />
             <StatCard
               label="Total Patients"
@@ -283,12 +282,12 @@ const Dashboard: React.FC = () => {
         {/* ── Main Grid ── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Recent Patients Table */}
-          <div className="lg:col-span-3 bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700/60">
-              <h3 className="text-sm font-semibold text-slate-100">Recent Patients</h3>
+          <div className="lg:col-span-3 bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+              <h3 className="text-sm font-semibold text-slate-900">Recent Patients</h3>
               <button
                 onClick={() => navigate('/patients')}
-                className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
               >
                 View all <ArrowRight className="w-3 h-3" />
               </button>
@@ -307,7 +306,7 @@ const Dashboard: React.FC = () => {
               ) : (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-xs text-slate-500 uppercase tracking-wider border-b border-slate-700/40">
+                    <tr className="text-xs text-slate-500 border-b border-slate-200">
                       <th className="text-left px-5 py-3">Name</th>
                       <th className="text-left px-3 py-3">Age</th>
                       <th className="text-left px-3 py-3">Gender</th>
@@ -316,20 +315,20 @@ const Dashboard: React.FC = () => {
                       <th className="px-3 py-3" />
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700/30">
+                  <tbody className="divide-y divide-slate-200">
                     {recentPatients.map((p) => (
                       <tr
                         key={p._id}
-                        className="hover:bg-slate-700/20 transition-colors"
+                        className="hover:bg-slate-100 transition-colors"
                       >
-                        <td className="px-5 py-3.5 font-medium text-slate-200">
+                        <td className="px-5 py-3.5 font-medium text-slate-800">
                           {p.name}
                         </td>
-                        <td className="px-3 py-3.5 text-slate-400">{p.age}</td>
-                        <td className="px-3 py-3.5 text-slate-400 capitalize">
+                        <td className="px-3 py-3.5 text-slate-600">{p.age}</td>
+                        <td className="px-3 py-3.5 text-slate-600 capitalize">
                           {p.gender}
                         </td>
-                        <td className="px-3 py-3.5 text-slate-400">
+                        <td className="px-3 py-3.5 text-slate-600">
                           {formatDate(p.lastAnalysisDate ?? '')}
                         </td>
                         <td className="px-3 py-3.5">
@@ -340,7 +339,7 @@ const Dashboard: React.FC = () => {
                         <td className="px-3 py-3.5">
                           <button
                             onClick={() => navigate(`/patients/${p._id}`)}
-                            className="p-1 rounded-lg text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
+                            className="p-1 rounded-lg text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition-colors"
                             aria-label={`View ${p.name}`}
                           >
                             <ChevronRight className="w-4 h-4" />
@@ -355,12 +354,12 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Recent Analyses Feed */}
-          <div className="lg:col-span-2 bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700/60">
-              <h3 className="text-sm font-semibold text-slate-100">Recent Analyses</h3>
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+              <h3 className="text-sm font-semibold text-slate-900">Recent Analyses</h3>
               <button
                 onClick={() => navigate('/analysis')}
-                className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
               >
                 View all <ArrowRight className="w-3 h-3" />
               </button>
@@ -370,7 +369,7 @@ const Dashboard: React.FC = () => {
               {loadingAnalyses ? (
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="h-16 bg-slate-700/40 rounded-xl animate-pulse" />
+                    <div key={i} className="h-16 bg-slate-100 rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : recentAnalyses.length === 0 ? (
@@ -383,14 +382,14 @@ const Dashboard: React.FC = () => {
                   {recentAnalyses.map((a) => (
                     <div
                       key={a._id}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/50 transition-colors cursor-pointer group"
+                      className="flex items-start gap-3 p-3 rounded-xl bg-slate-100 hover:bg-slate-100 transition-colors cursor-pointer group"
                       onClick={() => navigate(`/analysis/${a._id}`)}
                     >
-                      <div className="p-2 rounded-lg bg-blue-500/15 text-blue-400 flex-shrink-0">
+                      <div className="p-2 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
                         <ScanLine className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-slate-200 truncate">
+                        <p className="text-sm font-medium text-slate-800 truncate">
                           {a.patientName}
                         </p>
                         <p className="text-xs text-slate-500 capitalize mt-0.5">

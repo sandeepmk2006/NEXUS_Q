@@ -50,21 +50,21 @@ const Profile: React.FC = () => {
     <Layout title="Physician Profile">
       <div className="px-4 lg:px-8 py-6 space-y-6 max-w-4xl mx-auto">
         {/* Header Profile Summary */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-blue-500/20">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-800 flex items-center justify-center text-white text-3xl font-bold shadow-sm shadow-blue-900/10">
             {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'D'}
           </div>
 
           <div className="text-center sm:text-left space-y-1">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-slate-900">
                 {user?.displayName || user?.name || 'Physician'}
               </h2>
               <Badge variant={user?.role === 'admin' ? 'warning' : 'info'}>
                 {user?.role?.toUpperCase()}
               </Badge>
             </div>
-            <p className="text-xs text-slate-400">{user?.email}</p>
+            <p className="text-xs text-slate-600">{user?.email}</p>
             <p className="text-xs text-slate-500">
               Affiliation: {user?.hospital || 'Clinical Practice'} • Member since{' '}
               {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '2026'}
@@ -73,16 +73,16 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Profile Edit Form */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 shadow-xl">
-          <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-5 flex items-center gap-2">
-            <Stethoscope className="w-4 h-4 text-blue-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-800 mb-5 flex items-center gap-2">
+            <Stethoscope className="w-4 h-4 text-blue-600" />
             Medical Credentials & Practice Information
           </h3>
 
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Physician Name / Title
                 </label>
                 <div className="relative">
@@ -94,13 +94,13 @@ const Profile: React.FC = () => {
                     name="displayName"
                     value={formData.displayName}
                     onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Registered Email (Read-Only)
                 </label>
                 <div className="relative">
@@ -111,7 +111,7 @@ const Profile: React.FC = () => {
                     type="text"
                     disabled
                     value={user?.email || ''}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-400 text-sm cursor-not-allowed"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 text-sm cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -119,7 +119,7 @@ const Profile: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Clinical Specialty
                 </label>
                 <div className="relative">
@@ -131,13 +131,13 @@ const Profile: React.FC = () => {
                     name="specialization"
                     value={formData.specialization}
                     onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Medical License / Board ID
                 </label>
                 <div className="relative">
@@ -149,7 +149,7 @@ const Profile: React.FC = () => {
                     name="licenseNumber"
                     value={formData.licenseNumber}
                     onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -157,7 +157,7 @@ const Profile: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Hospital / Department
                 </label>
                 <div className="relative">
@@ -169,13 +169,13 @@ const Profile: React.FC = () => {
                     name="hospital"
                     value={formData.hospital}
                     onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Direct Phone Line
                 </label>
                 <div className="relative">
@@ -187,7 +187,7 @@ const Profile: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>

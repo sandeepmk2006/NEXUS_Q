@@ -54,27 +54,27 @@ const Modal: React.FC<ModalProps> = ({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Panel */}
       <div
-        className={`relative w-full ${sizeClasses[size]} bg-[#1e293b] border border-slate-700/60 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]`}
+        className={`relative w-full ${sizeClasses[size]} bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col max-h-[90vh]`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700/60 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 flex-shrink-0">
           <h2
             id="modal-title"
-            className="text-lg font-semibold text-slate-100"
+            className="text-lg font-semibold text-slate-900"
           >
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 transition-colors"
+            className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />

@@ -194,34 +194,64 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Brand Header */}
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-600/30">
-            <Stethoscope className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-white text-slate-900 lg:grid lg:grid-cols-[1.05fr_1fr]">
+      {/* Brand panel */}
+      <aside className="hidden lg:flex flex-col justify-between bg-blue-700 text-white px-14 py-12">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
+            <Stethoscope className="w-5 h-5 text-white" />
           </div>
-          <div className="flex items-baseline">
-            <span className="text-2xl font-bold tracking-tight text-white">Tetrix</span>
-            <span className="text-2xl font-bold tracking-tight text-blue-400">AI</span>
+          <span className="text-xl font-semibold tracking-tight">TetrixAI</span>
+        </div>
+
+        <div className="space-y-10 max-w-md">
+          {/* The product in one picture: a region on a scan, with its confidence */}
+          <div className="relative h-52 rounded-lg bg-blue-900/60 border border-white/15 overflow-hidden" aria-hidden="true">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_55%,rgba(255,255,255,0.16),transparent_55%),radial-gradient(ellipse_at_72%_50%,rgba(255,255,255,0.10),transparent_50%)]" />
+            <div className="absolute left-[16%] top-[34%] w-[26%] h-[40%] border-2 border-amber-300">
+              <span className="absolute -top-6 left-[-2px] whitespace-nowrap bg-amber-300 text-blue-950 text-[11px] font-semibold px-1.5 py-0.5">
+                Finding 1: 87% confidence
+              </span>
+            </div>
+            <div className="absolute right-[14%] top-[40%] w-[20%] h-[30%] border-2 border-white/70" />
+          </div>
+
+          <div className="space-y-3">
+            <h1 className="text-4xl font-semibold leading-tight tracking-tight">
+              A second opinion on every scan.
+            </h1>
+            <p className="text-blue-100 leading-relaxed">
+              Upload an image with the patient&apos;s notes. TetrixAI outlines what it sees, says how
+              sure it is, and leaves the decision to you.
+            </p>
           </div>
         </div>
-        <p className="text-center text-xs text-slate-400 uppercase tracking-widest font-medium">
-          A Doctor Assistant
-        </p>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-[#1e293b] py-8 px-6 shadow-xl rounded-2xl border border-slate-700/60 sm:px-10">
+        <p className="text-sm text-blue-200 max-w-md">
+          Decision support for qualified clinicians. It does not replace clinical judgment.
+        </p>
+      </aside>
+
+      {/* Form panel */}
+      <main className="flex flex-col justify-center px-6 py-12 sm:px-12">
+        <div className="w-full max-w-md mx-auto">
+          <div className="lg:hidden flex items-center gap-2.5 mb-8">
+            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
+              <Stethoscope className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-semibold tracking-tight">TetrixAI</span>
+          </div>
+
+        <div>
           {/* Navigation Tabs */}
-          <div className="flex border-b border-slate-700 mb-6">
+          <div className="flex border-b border-slate-200 mb-6">
             <button
               type="button"
               onClick={() => setTab('login')}
               className={`flex-1 pb-3 text-sm font-semibold text-center border-b-2 transition-all ${
                 tab === 'login'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
               Log In
@@ -231,8 +261,8 @@ const SignIn: React.FC = () => {
               onClick={() => setTab('signup')}
               className={`flex-1 pb-3 text-sm font-semibold text-center border-b-2 transition-all ${
                 tab === 'signup'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
               Sign Up (Doctors)
@@ -243,8 +273,8 @@ const SignIn: React.FC = () => {
           {tab === 'login' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-base font-semibold text-slate-100">Welcome Back</h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <h3 className="text-base font-semibold text-slate-900">Welcome Back</h3>
+                <p className="text-xs text-slate-600 mt-1">
                   Access your clinical workspace and patient diagnostics.
                 </p>
               </div>
@@ -254,7 +284,7 @@ const SignIn: React.FC = () => {
                 size="lg"
                 loading={loading}
                 onClick={() => handleGoogleLogin(false)}
-                className="w-full flex items-center justify-center gap-3 py-3 bg-blue-600 hover:bg-blue-500 text-sm font-semibold shadow-md"
+                className="w-full flex items-center justify-center gap-3 py-3 bg-blue-600 hover:bg-blue-700 text-sm font-semibold shadow-sm"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -281,7 +311,7 @@ const SignIn: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleGoogleLogin(true)}
-                  className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                  className="text-[11px] text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1"
                 >
                   <ExternalLink className="w-3 h-3" />
                   <span>Browser blocking popups? Sign in via Redirect</span>
@@ -290,7 +320,7 @@ const SignIn: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTab('signup')}
-                  className="text-xs text-slate-400 hover:text-blue-400 transition-colors mt-1"
+                  className="text-xs text-slate-600 hover:text-blue-700 transition-colors mt-1"
                 >
                   New doctor? Register here <ArrowRight className="inline w-3 h-3 ml-0.5" />
                 </button>
@@ -302,24 +332,24 @@ const SignIn: React.FC = () => {
           {tab === 'signup' && (
             <form onSubmit={handleDoctorSignUp} className="space-y-4">
               <div>
-                <h3 className="text-base font-semibold text-slate-100">Doctor Registration</h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <h3 className="text-base font-semibold text-slate-900">Doctor Registration</h3>
+                <p className="text-xs text-slate-600 mt-1">
                   Enter your medical credentials to initialize your clinical account.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Specialization *
                 </label>
                 <select
                   name="specialization"
                   value={signupForm.specialization}
                   onChange={handleSignupChange}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   {SPECIALIZATIONS.map((spec) => (
-                    <option key={spec} value={spec} className="bg-slate-900">
+                    <option key={spec} value={spec} className="bg-slate-50">
                       {spec}
                     </option>
                   ))}
@@ -327,7 +357,7 @@ const SignIn: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Medical License Number *
                 </label>
                 <input
@@ -337,12 +367,12 @@ const SignIn: React.FC = () => {
                   onChange={handleSignupChange}
                   placeholder="e.g. MD-482019"
                   required
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Hospital / Clinic *
                 </label>
                 <input
@@ -352,12 +382,12 @@ const SignIn: React.FC = () => {
                   onChange={handleSignupChange}
                   placeholder="e.g. Apollo Hospitals"
                   required
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Direct Phone (Optional)
                 </label>
                 <input
@@ -366,7 +396,7 @@ const SignIn: React.FC = () => {
                   value={signupForm.phone}
                   onChange={handleSignupChange}
                   placeholder="e.g. +91 98765 43210"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
                 />
               </div>
 
@@ -376,7 +406,7 @@ const SignIn: React.FC = () => {
                   variant="primary"
                   size="lg"
                   loading={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-sm font-semibold shadow-md"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-sm font-semibold shadow-sm"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -404,7 +434,7 @@ const SignIn: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTab('login')}
-                  className="text-xs text-slate-400 hover:text-blue-400 transition-colors"
+                  className="text-xs text-slate-600 hover:text-blue-700 transition-colors"
                 >
                   Already have an account? Log In
                 </button>
@@ -412,12 +442,9 @@ const SignIn: React.FC = () => {
             </form>
           )}
 
-          {/* Footer note */}
-          <div className="mt-6 pt-4 border-t border-slate-700/50 text-center text-[11px] text-slate-500">
-            TetrixAI • Clinical Diagnostic Assistant
-          </div>
         </div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

@@ -14,13 +14,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 hover:bg-blue-500 text-white shadow-sm shadow-blue-900/30 focus-visible:ring-blue-500',
+    'bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-900/30 focus-visible:ring-blue-500',
   secondary:
-    'bg-slate-700 hover:bg-slate-600 text-slate-200 shadow-sm focus-visible:ring-slate-500',
+    'bg-slate-100 hover:bg-slate-200 text-slate-800 shadow-sm focus-visible:ring-slate-500',
   danger:
-    'bg-red-600 hover:bg-red-500 text-white shadow-sm shadow-red-900/30 focus-visible:ring-red-500',
+    'bg-red-600 hover:bg-red-700 text-white shadow-sm shadow-red-900/30 focus-visible:ring-red-500',
   ghost:
-    'bg-transparent hover:bg-slate-700/60 text-slate-300 hover:text-slate-100 focus-visible:ring-slate-500',
+    'bg-transparent hover:bg-slate-100 text-slate-700 hover:text-slate-900 focus-visible:ring-slate-500',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       className={[
         'inline-flex items-center justify-center font-medium rounded-lg transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
         variantStyles[variant],
         sizeStyles[size],
         isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',

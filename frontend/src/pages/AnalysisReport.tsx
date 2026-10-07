@@ -97,7 +97,7 @@ const AnalysisReport: React.FC = () => {
   if (!report) {
     return (
       <Layout title="Diagnostic Report">
-        <div className="p-8 text-center text-slate-400">
+        <div className="p-8 text-center text-slate-600">
           <p>Analysis report not found.</p>
           <Button variant="secondary" className="mt-4" onClick={() => navigate('/dashboard')}>
             Return to Dashboard
@@ -116,7 +116,7 @@ const AnalysisReport: React.FC = () => {
         <div className="flex items-center justify-between print:hidden">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back</span>
@@ -131,21 +131,21 @@ const AnalysisReport: React.FC = () => {
         </div>
 
         {/* Report Header Card */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="text-xl font-bold text-white tracking-tight">Tetrix</span>
-                <span className="text-xl font-bold text-blue-400 tracking-tight">AI</span>
+                <span className="text-xl font-bold text-slate-900 tracking-tight">Tetrix</span>
+                <span className="text-xl font-bold text-blue-600 tracking-tight">AI</span>
                 <Badge variant="info">Clinical Decision Support</Badge>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Diagnostic Copilot & Imaging Report
               </p>
             </div>
 
-            <div className="text-right text-xs text-slate-400">
-              <div className="flex items-center sm:justify-end gap-1.5 text-slate-300">
+            <div className="text-right text-xs text-slate-600">
+              <div className="flex items-center sm:justify-end gap-1.5 text-slate-700">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{new Date(report.createdAt).toLocaleString()}</span>
               </div>
@@ -155,39 +155,39 @@ const AnalysisReport: React.FC = () => {
 
           {/* Patient & Exam Metadata Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs pt-1">
-            <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
               <span className="text-slate-500 font-medium block">Patient</span>
-              <span className="text-slate-200 font-semibold text-sm">
+              <span className="text-slate-800 font-semibold text-sm">
                 {patient?.name || 'Assigned Patient'}
               </span>
-              <span className="text-slate-400 block text-[11px] mt-0.5">
+              <span className="text-slate-600 block text-[11px] mt-0.5">
                 {patient ? `${patient.age}y • ${patient.gender}` : ''}
               </span>
             </div>
 
-            <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
               <span className="text-slate-500 font-medium block">Attending Physician</span>
-              <span className="text-slate-200 font-semibold text-sm">
+              <span className="text-slate-800 font-semibold text-sm">
                 {report.doctorName || 'Dr. Physician'}
               </span>
-              <span className="text-slate-400 block text-[11px] mt-0.5">ID: {report.doctorId.slice(0, 8)}</span>
+              <span className="text-slate-600 block text-[11px] mt-0.5">ID: {report.doctorId.slice(0, 8)}</span>
             </div>
 
-            <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
               <span className="text-slate-500 font-medium block">Imaging Modality</span>
-              <span className="text-slate-200 font-semibold text-sm">{report.imageType}</span>
-              <span className="text-slate-400 block text-[11px] mt-0.5">
+              <span className="text-slate-800 font-semibold text-sm">{report.imageType}</span>
+              <span className="text-slate-600 block text-[11px] mt-0.5">
                 {report.imageName || 'Scan File'}
               </span>
             </div>
 
-            <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
               <span className="text-slate-500 font-medium block">Diagnostic Quality</span>
               <span
                 className={`font-semibold text-sm capitalize ${
                   analysis?.imageQualityRating === 'poor' || analysis?.imageQualityRating === 'fair'
-                    ? 'text-amber-400'
-                    : 'text-emerald-400'
+                    ? 'text-amber-700'
+                    : 'text-emerald-700'
                 }`}
               >
                 {analysis?.imageQualityRating && analysis.imageQualityRating !== 'unknown'
@@ -195,7 +195,7 @@ const AnalysisReport: React.FC = () => {
                   : 'Unrated'}
               </span>
               <span
-                className="text-slate-400 block text-[11px] mt-0.5 line-clamp-2"
+                className="text-slate-600 block text-[11px] mt-0.5 line-clamp-2"
                 title={analysis?.imageQuality}
               >
                 {analysis?.imageQuality}
@@ -209,17 +209,17 @@ const AnalysisReport: React.FC = () => {
 
         {/* Poor-quality warning */}
         {analysis?.qualityWarning && (
-          <div className="bg-amber-950/30 border border-amber-700/40 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-200">
-            <AlertOctagon className="w-5 h-5 text-amber-400 flex-shrink-0" />
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-700">
+            <AlertOctagon className="w-5 h-5 text-amber-700 flex-shrink-0" />
             <p className="leading-relaxed">{analysis.qualityWarning}</p>
           </div>
         )}
 
         {/* Annotated scan */}
         {report.imageDataUrl && (
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              <ScanLine className="w-4 h-4 text-blue-400" />
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+              <ScanLine className="w-4 h-4 text-blue-600" />
               <span>Localized Findings (click a box or card to highlight)</span>
             </div>
             <ImageOverlay
@@ -232,29 +232,29 @@ const AnalysisReport: React.FC = () => {
         )}
 
         {/* Clinical History & Symptoms */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
-            <FileText className="w-4 h-4 text-blue-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2">
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+            <FileText className="w-4 h-4 text-blue-600" />
             <span>Presented Clinical Context & Patient History</span>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
+          <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
             {report.clinicalNotes || 'No presenting symptoms provided at time of upload.'}
           </p>
         </div>
 
         {/* Executive Summary */}
-        <div className="bg-[#1e293b] border border-blue-500/30 rounded-2xl p-6 space-y-3 relative overflow-hidden shadow-xl">
+        <div className="bg-white border border-blue-200 rounded-2xl p-6 space-y-3 relative overflow-hidden shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-400" />
-              <h3 className="text-base font-bold text-white">Diagnostic AI Executive Summary</h3>
+              <Activity className="w-5 h-5 text-blue-600" />
+              <h3 className="text-base font-bold text-slate-900">Diagnostic AI Executive Summary</h3>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Evidence Grounded</span>
             </div>
           </div>
-          <p className="text-sm text-slate-200 leading-relaxed font-medium">
+          <p className="text-sm text-slate-800 leading-relaxed font-medium">
             {analysis?.summary}
           </p>
         </div>
@@ -262,11 +262,11 @@ const AnalysisReport: React.FC = () => {
         {/* Detailed Findings List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <ScanLine className="w-5 h-5 text-blue-400" />
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <ScanLine className="w-5 h-5 text-blue-600" />
               <span>Identified Pathological & Anatomical Findings ({analysis?.findings?.length || 0})</span>
             </h3>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-600">
               Each finding is verified with coordinates & confidence rating
             </span>
           </div>
@@ -284,12 +284,12 @@ const AnalysisReport: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-8 text-center text-slate-400 space-y-2">
-              <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-              <p className="text-sm font-semibold text-slate-200">
+            <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-600 space-y-2">
+              <CheckCircle2 className="w-10 h-10 text-emerald-700 mx-auto" />
+              <p className="text-sm font-semibold text-slate-800">
                 No evidence-supported findings
               </p>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">
+              <p className="text-xs text-slate-600 max-w-md mx-auto">
                 Doctor, the model reported no findings that could be tied to an image region or the
                 clinical notes. This does not exclude pathology.
                 {!!analysis?.droppedFindings &&
@@ -301,22 +301,22 @@ const AnalysisReport: React.FC = () => {
 
         {/* Overall Physician-Faced Assessment */}
         {analysis?.overallAssessment && (
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-6 space-y-3">
-            <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <Stethoscope className="w-4 h-4 text-blue-400" />
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+              <Stethoscope className="w-4 h-4 text-blue-600" />
               Comprehensive Physician Assessment
             </h3>
-            <div className="text-xs text-slate-300 leading-relaxed whitespace-pre-line bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+            <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
               {analysis.overallAssessment}
             </div>
           </div>
         )}
 
         {/* Medical Regulatory Disclaimer */}
-        <div className="bg-red-950/20 border border-red-900/40 rounded-2xl p-5 flex items-start gap-3 text-xs text-red-200/90">
-          <AlertOctagon className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-start gap-3 text-xs text-red-700/90">
+          <AlertOctagon className="w-5 h-5 text-red-700 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-bold text-red-300">Regulatory Medical Device Warning: </span>
+            <span className="font-bold text-red-700">Regulatory Medical Device Warning: </span>
             <p className="leading-relaxed">
               {analysis?.disclaimer ||
                 'TetrixAI is an assistive clinical decision support tool for certified physicians. Final diagnostic decisions and patient interventions remain the responsibility of the attending physician.'}

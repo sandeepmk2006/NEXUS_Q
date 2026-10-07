@@ -148,7 +148,7 @@ const AdminDashboard: React.FC = () => {
     return (
       <Layout title="System Administration">
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" />
         </div>
       </Layout>
     );
@@ -161,10 +161,10 @@ const AdminDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <Shield className="w-6 h-6 text-violet-400" />
-              <h2 className="text-xl font-bold text-slate-100">Superadmin Control Tower</h2>
+              <Shield className="w-6 h-6 text-blue-700" />
+              <h2 className="text-xl font-bold text-slate-900">Superadmin Control Tower</h2>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-600 mt-1">
               Cross-department doctor management, patient reassignment, and audit surveillance
             </p>
           </div>
@@ -175,45 +175,45 @@ const AdminDashboard: React.FC = () => {
 
         {/* Global Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase">Registered Doctors</p>
-              <h3 className="text-3xl font-bold text-slate-100 mt-1">{stats.totalDoctors}</h3>
+              <p className="text-xs text-slate-600 font-semibold">Registered Doctors</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{stats.totalDoctors}</h3>
             </div>
-            <div className="p-3 rounded-xl bg-blue-500/10 text-blue-400">
+            <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
               <Stethoscope className="w-6 h-6" />
             </div>
           </div>
 
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase">Total Patient Charts</p>
-              <h3 className="text-3xl font-bold text-slate-100 mt-1">{stats.totalPatients}</h3>
+              <p className="text-xs text-slate-600 font-semibold">Total Patient Charts</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{stats.totalPatients}</h3>
             </div>
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="p-3 rounded-xl bg-emerald-50 text-emerald-700">
               <Users className="w-6 h-6" />
             </div>
           </div>
 
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl p-5 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase">AI Scans Executed</p>
-              <h3 className="text-3xl font-bold text-slate-100 mt-1">{stats.totalAnalyses}</h3>
+              <p className="text-xs text-slate-600 font-semibold">AI Scans Executed</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{stats.totalAnalyses}</h3>
             </div>
-            <div className="p-3 rounded-xl bg-violet-500/10 text-violet-400">
+            <div className="p-3 rounded-xl bg-blue-50 text-blue-700">
               <Activity className="w-6 h-6" />
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-700/60 gap-4">
+        <div className="flex border-b border-slate-200 gap-4">
           <button
             onClick={() => setActiveTab('doctors')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-2 ${
+            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'doctors'
-                ? 'border-violet-500 text-violet-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-500 text-blue-700'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <Stethoscope className="w-4 h-4" />
@@ -221,10 +221,10 @@ const AdminDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('patients')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-2 ${
+            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'patients'
-                ? 'border-violet-500 text-violet-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-500 text-blue-700'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -232,10 +232,10 @@ const AdminDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('audits')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-2 ${
+            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'audits'
-                ? 'border-violet-500 text-violet-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-500 text-blue-700'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -245,7 +245,7 @@ const AdminDashboard: React.FC = () => {
 
         {/* Search */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-600">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -253,17 +253,17 @@ const AdminDashboard: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search records in active tab..."
-            className="w-full pl-10 pr-4 py-2.5 bg-[#1e293b] border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder-slate-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
           />
         </div>
 
         {/* Tab 1: Doctors */}
         {activeTab === 'doctors' && (
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="bg-slate-900/40 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
+                  <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Doctor Name</th>
                     <th className="py-3.5 px-4">Specialization</th>
                     <th className="py-3.5 px-4">Affiliation</th>
@@ -271,17 +271,17 @@ const AdminDashboard: React.FC = () => {
                     <th className="py-3.5 px-5 text-right">Administrative Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/40">
+                <tbody className="divide-y divide-slate-200">
                   {filteredDoctors.map((doc) => (
-                    <tr key={doc.id || doc.uid} className="hover:bg-slate-800/40 transition-colors">
+                    <tr key={doc.id || doc.uid} className="hover:bg-blue-50/60 transition-colors">
                       <td className="py-3.5 px-5">
-                        <div className="font-semibold text-slate-100">{doc.displayName}</div>
-                        <div className="text-xs text-slate-400">{doc.email}</div>
+                        <div className="font-semibold text-slate-900">{doc.displayName}</div>
+                        <div className="text-xs text-slate-600">{doc.email}</div>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-300">
+                      <td className="py-3.5 px-4 text-slate-700">
                         {doc.specialization || 'General'}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-300">
+                      <td className="py-3.5 px-4 text-slate-700">
                         {doc.hospital || 'Private Clinic'}
                       </td>
                       <td className="py-3.5 px-4">
@@ -319,26 +319,26 @@ const AdminDashboard: React.FC = () => {
 
         {/* Tab 2: Patients & Transfer */}
         {activeTab === 'patients' && (
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="bg-slate-900/40 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
+                  <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Patient Name</th>
                     <th className="py-3.5 px-4">Demographics</th>
                     <th className="py-3.5 px-4">Current Assigned Doctor</th>
                     <th className="py-3.5 px-5 text-right">Reassign Physician</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/40">
+                <tbody className="divide-y divide-slate-200">
                   {filteredPatients.map((pat) => (
-                    <tr key={pat.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="py-3.5 px-5 font-semibold text-slate-100">{pat.name}</td>
-                      <td className="py-3.5 px-4 text-slate-300">
+                    <tr key={pat.id} className="hover:bg-blue-50/60 transition-colors">
+                      <td className="py-3.5 px-5 font-semibold text-slate-900">{pat.name}</td>
+                      <td className="py-3.5 px-4 text-slate-700">
                         {pat.age} yrs • {pat.gender} ({pat.bloodType || 'O+'})
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="font-semibold text-blue-400">
+                        <span className="font-semibold text-blue-600">
                           {pat.assignedDoctorName || 'Dr. Attending'}
                         </span>
                       </td>
@@ -347,7 +347,7 @@ const AdminDashboard: React.FC = () => {
                           variant="secondary"
                           size="sm"
                           onClick={() => openTransferModal(pat)}
-                          className="text-xs hover:border-violet-500 hover:text-violet-300"
+                          className="text-xs hover:border-blue-500 hover:text-blue-700"
                         >
                           <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
                           Transfer Patient
@@ -363,30 +363,30 @@ const AdminDashboard: React.FC = () => {
 
         {/* Tab 3: Audits */}
         {activeTab === 'audits' && (
-          <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="bg-slate-900/40 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
+                  <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Event Action</th>
                     <th className="py-3.5 px-4">Patient / Subject</th>
                     <th className="py-3.5 px-4">Operator</th>
                     <th className="py-3.5 px-5 text-right">Timestamp</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/40">
+                <tbody className="divide-y divide-slate-200">
                   {audits.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-800/40">
+                    <tr key={log.id} className="hover:bg-blue-50/60">
                       <td className="py-3.5 px-5">
                         <Badge variant="warning">{log.action}</Badge>
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-slate-300">
+                      <td className="py-3.5 px-4 text-xs font-mono text-slate-700">
                         {log.patientId ? `Patient #${log.patientId.slice(0, 8)}` : 'System Entity'}
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-slate-400">
+                      <td className="py-3.5 px-4 text-xs font-mono text-slate-600">
                         {log.performedBy.slice(0, 8)}
                       </td>
-                      <td className="py-3.5 px-5 text-right text-xs text-slate-400">
+                      <td className="py-3.5 px-5 text-right text-xs text-slate-600">
                         {new Date(log.timestamp).toLocaleString()}
                       </td>
                     </tr>
@@ -405,21 +405,21 @@ const AdminDashboard: React.FC = () => {
           size="md"
         >
           <form onSubmit={handleExecuteTransfer} className="space-y-4">
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-700">
               Transferring this patient will revoke access from{' '}
-              <strong className="text-blue-400">{selectedPatient?.assignedDoctorName}</strong> and
+              <strong className="text-blue-600">{selectedPatient?.assignedDoctorName}</strong> and
               grant exclusive access to the target physician.
             </p>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Select Target Physician *
               </label>
               <select
                 value={targetDoctorId}
                 onChange={(e) => setTargetDoctorId(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="">-- Choose Doctor --</option>
                 {doctors
@@ -432,7 +432,7 @@ const AdminDashboard: React.FC = () => {
               </select>
             </div>
 
-            <div className="pt-3 flex justify-end gap-3 border-t border-slate-700">
+            <div className="pt-3 flex justify-end gap-3 border-t border-slate-200">
               <Button type="button" variant="ghost" onClick={() => setTransferModalOpen(false)}>
                 Cancel
               </Button>

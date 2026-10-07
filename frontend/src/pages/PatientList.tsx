@@ -143,11 +143,11 @@ const PatientList: React.FC = () => {
         {/* Header Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-400" />
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <Users className="w-5 h-5 text-blue-600" />
               <span>{isAdmin ? 'System Patient Directory' : 'My Patients'}</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               {isAdmin
                 ? 'All patients registered across clinical departments'
                 : 'Medical records under your direct clinical supervision'}
@@ -169,7 +169,7 @@ const PatientList: React.FC = () => {
 
         {/* Search Bar */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-600">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -177,21 +177,21 @@ const PatientList: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by patient name, assigned doctor, blood group..."
-            className="w-full pl-10 pr-4 py-2.5 bg-[#1e293b] border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
           />
         </div>
 
         {/* Patients Table */}
-        <div className="bg-[#1e293b] border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           {loading ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-slate-600">
               <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-3" />
               <p className="text-sm">Loading patient records...</p>
             </div>
           ) : filteredPatients.length === 0 ? (
             <div className="p-12 text-center text-slate-500 space-y-3">
-              <Users className="w-12 h-12 mx-auto opacity-30 text-slate-400" />
-              <p className="text-base font-medium text-slate-300">No patient records found</p>
+              <Users className="w-12 h-12 mx-auto opacity-30 text-slate-600" />
+              <p className="text-base font-medium text-slate-700">No patient records found</p>
               <p className="text-xs max-w-sm mx-auto">
                 {searchQuery
                   ? 'No patient matches your search query.'
@@ -202,7 +202,7 @@ const PatientList: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="bg-slate-900/40 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
+                  <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Patient Name</th>
                     <th className="py-3.5 px-4">Demographics</th>
                     <th className="py-3.5 px-4">Blood Group</th>
@@ -211,32 +211,32 @@ const PatientList: React.FC = () => {
                     <th className="py-3.5 px-5 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/40">
+                <tbody className="divide-y divide-slate-200">
                   {filteredPatients.map((patient) => (
                     <tr
                       key={patient.id}
-                      className="hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-blue-50/60 transition-colors"
                     >
                       <td className="py-3.5 px-5">
-                        <div className="font-semibold text-slate-100">{patient.name}</div>
+                        <div className="font-semibold text-slate-900">{patient.name}</div>
                         {patient.phone && (
-                          <div className="text-xs text-slate-400">{patient.phone}</div>
+                          <div className="text-xs text-slate-600">{patient.phone}</div>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-300">
+                      <td className="py-3.5 px-4 text-slate-700">
                         {patient.age} yrs • {patient.gender}
                       </td>
                       <td className="py-3.5 px-4">
                         <Badge variant="info">{patient.bloodType || 'N/A'}</Badge>
                       </td>
                       {isAdmin && (
-                        <td className="py-3.5 px-4 text-slate-300">
-                          <span className="font-medium text-blue-400">
+                        <td className="py-3.5 px-4 text-slate-700">
+                          <span className="font-medium text-blue-600">
                             {patient.assignedDoctorName || 'Dr. Assigned'}
                           </span>
                         </td>
                       )}
-                      <td className="py-3.5 px-4 text-xs text-slate-400">
+                      <td className="py-3.5 px-4 text-xs text-slate-600">
                         {patient.lastAnalysisAt
                           ? new Date(patient.lastAnalysisAt).toLocaleDateString()
                           : 'No scan on file'}
@@ -281,7 +281,7 @@ const PatientList: React.FC = () => {
           <form onSubmit={handleCreatePatient} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -291,13 +291,13 @@ const PatientList: React.FC = () => {
                   onChange={handleInputChange}
                   placeholder="e.g. Eleanor Vance"
                   required
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Age *
                   </label>
                   <input
@@ -309,18 +309,18 @@ const PatientList: React.FC = () => {
                     required
                     min="0"
                     max="125"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Gender
                   </label>
                   <select
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -332,14 +332,14 @@ const PatientList: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Blood Group
                 </label>
                 <select
                   name="bloodType"
                   value={formData.bloodType}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].map((type) => (
                     <option key={type} value={type}>
@@ -350,7 +350,7 @@ const PatientList: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Phone Number
                 </label>
                 <input
@@ -359,12 +359,12 @@ const PatientList: React.FC = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Email
                 </label>
                 <input
@@ -373,13 +373,13 @@ const PatientList: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="patient@mail.com"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Medical History / Baseline Conditions
               </label>
               <textarea
@@ -388,13 +388,13 @@ const PatientList: React.FC = () => {
                 value={formData.medicalHistory}
                 onChange={handleInputChange}
                 placeholder="Prior surgeries, hypertension, chronic lung conditions..."
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Known Allergies (comma-separated)
                 </label>
                 <input
@@ -403,12 +403,12 @@ const PatientList: React.FC = () => {
                   value={formData.allergies}
                   onChange={handleInputChange}
                   placeholder="e.g. Penicillin, Latex, Contrast dye"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Current Medications (comma-separated)
                 </label>
                 <input
@@ -417,12 +417,12 @@ const PatientList: React.FC = () => {
                   value={formData.currentMedications}
                   onChange={handleInputChange}
                   placeholder="e.g. Lisinopril 10mg, Metformin 500mg"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400"
                 />
               </div>
             </div>
 
-            <div className="pt-3 flex justify-end gap-3 border-t border-slate-700">
+            <div className="pt-3 flex justify-end gap-3 border-t border-slate-200">
               <Button
                 type="button"
                 variant="ghost"

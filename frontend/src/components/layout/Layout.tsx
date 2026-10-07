@@ -57,18 +57,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
     <aside
       className={[
-        'flex flex-col bg-[#1e293b] border-r border-slate-700/60 h-full',
+        'flex flex-col bg-white border-r border-slate-200 h-full',
         mobile ? 'w-full' : 'w-64 flex-shrink-0',
       ].join(' ')}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-700/60">
-        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-600 shadow-lg shadow-blue-900/40">
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-200">
+        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-600 shadow-sm shadow-blue-900/40">
           <Stethoscope className="w-5 h-5 text-white" />
         </div>
         <div>
-          <span className="text-lg font-bold text-white tracking-tight">Tetrix</span>
-          <span className="text-lg font-bold text-blue-400 tracking-tight">AI</span>
+          <span className="text-lg font-bold text-slate-900 tracking-tight">Tetrix</span>
+          <span className="text-lg font-bold text-blue-600 tracking-tight">AI</span>
         </div>
       </div>
 
@@ -83,8 +83,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
               [
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group',
                 isActive
-                  ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50',
+                  ? 'bg-blue-50 text-blue-600 ring-1 ring-blue-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
               ].join(' ')
             }
           >
@@ -93,7 +93,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
                 <Icon
                   className={[
                     'w-4.5 h-4.5 flex-shrink-0 transition-colors',
-                    isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300',
+                    isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-800',
                   ].join(' ')}
                   style={{ width: '1.125rem', height: '1.125rem' }}
                 />
@@ -105,7 +105,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 space-y-1 border-t border-slate-700/60 pt-3">
+      <div className="px-3 pb-4 space-y-1 border-t border-slate-200 pt-3">
         <NavLink
           to="/profile"
           onClick={() => mobile && setSidebarOpen(false)}
@@ -113,13 +113,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
             [
               'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group w-full',
               isActive
-                ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50',
+                ? 'bg-blue-50 text-blue-600 ring-1 ring-blue-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
             ].join(' ')
           }
         >
           <User
-            className="text-slate-500 group-hover:text-slate-300 flex-shrink-0"
+            className="text-slate-500 group-hover:text-slate-800 flex-shrink-0"
             style={{ width: '1.125rem', height: '1.125rem' }}
           />
           Profile
@@ -127,24 +127,24 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
 
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors group"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-red-700 hover:bg-red-50 transition-colors group"
         >
           <LogOut
-            className="text-slate-500 group-hover:text-red-400 flex-shrink-0"
+            className="text-slate-500 group-hover:text-red-700 flex-shrink-0"
             style={{ width: '1.125rem', height: '1.125rem' }}
           />
           Sign Out
         </button>
 
         {/* User info */}
-        <div className="flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl bg-slate-800/60">
+        <div className="flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl bg-slate-100">
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
             <span className="text-white text-xs font-semibold">
               {user?.name?.charAt(0).toUpperCase() ?? 'U'}
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-slate-200 truncate">{user?.name ?? 'User'}</p>
+            <p className="text-xs font-medium text-slate-800 truncate">{user?.name ?? 'User'}</p>
             <p className="text-[10px] text-slate-500 capitalize">{user?.role ?? 'doctor'}</p>
           </div>
         </div>
@@ -153,7 +153,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
   );
 
   return (
-    <div className="flex h-screen bg-[#0f172a] overflow-hidden">
+    <div className="flex h-screen bg-[#f3f6fb] overflow-hidden">
       {/* Desktop sidebar */}
       <div className="hidden lg:flex h-full">
         <Sidebar />
@@ -163,7 +163,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
           <div className="absolute inset-y-0 left-0 w-72 z-50">
@@ -175,34 +175,34 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Dashboard' }) => {
       {/* Main */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Topbar */}
-        <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-[#1e293b] border-b border-slate-700/60 flex-shrink-0">
+        <header className="flex items-center justify-between px-4 lg:px-6 py-4 bg-white border-b border-slate-200 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
-              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 transition-colors"
+              className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-base font-semibold text-slate-100">{title}</h1>
+            <h1 className="text-base font-semibold text-slate-900">{title}</h1>
           </div>
 
           <div className="flex items-center gap-2">
             <button
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 transition-colors relative"
+              className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors relative"
               aria-label="Notifications"
             >
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
             </button>
 
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-700/60">
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
                   {user?.name?.charAt(0).toUpperCase() ?? 'U'}
                 </span>
               </div>
-              <span className="hidden sm:block text-sm text-slate-300 font-medium">
+              <span className="hidden sm:block text-sm text-slate-700 font-medium">
                 {user?.name ?? 'User'}
               </span>
             </div>

@@ -32,3 +32,4 @@ localdb.json
 /*.jpg
 /*.docx
 *.bak
+.playwright-mcp/
