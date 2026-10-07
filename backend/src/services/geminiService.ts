@@ -95,7 +95,7 @@ function normalizeQuality(rating: unknown, description: unknown): QualityRating 
 }
 
 const CHANGE_WORDS =
-  /\b(improv\w*|resolv\w*|interval|clearing|cleared|progress\w*|worsen\w*|increas\w*|decreas\w*|enlarg\w*|unchanged|stable|new (lesion|finding|opacity))\b/i;
+  /\b(improv\w*|resolv\w*|interval|clearing|cleared|progress\w*|worsen\w*|(increas|decreas|enlarg)\w* (in size|since|from)|unchanged|stable|new (lesion|finding|opacity))\b/i;
 
 /** Flags reports that talk about change over time, since the model never sees earlier images. */
 function comparisonCaveatFor(prior: PriorAnalysis[] | undefined, parsed: any, findings: MedicalFinding[]): string | null {
