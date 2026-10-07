@@ -45,9 +45,16 @@ interface AuditLog {
   patientId?: string;
   fromDoctorId?: string;
   toDoctorId?: string;
+  doctorId?: string;
   performedBy: string;
   timestamp: string;
 }
+
+const ACTION_LABELS: Record<string, { label: string; variant: 'info' | 'warning' | 'success' | 'danger' }> = {
+  patient_transfer: { label: 'Patient reassigned', variant: 'info' },
+  doctor_suspended: { label: 'Doctor suspended', variant: 'danger' },
+  doctor_activated: { label: 'Doctor reactivated', variant: 'success' },
+};
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'doctors' | 'patients' | 'audits'>('doctors');
@@ -69,19 +76,30 @@ const AdminDashboard: React.FC = () => {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
-      const [sRes, dRes, pRes, aRes] = await Promise.all([
-        api.get('/admin/stats'),
-        api.get('/admin/doctors'),
-        api.get('/admin/patients'),
-        api.get('/admin/audit-logs'),
-      ]);
+      // Load each section independently so one failing request does not blank the whole page
+      const sections = ['stats', 'doctors', 'patients', 'audit-logs'] as const;
+      const results = await Promise.allSettled(sections.map((s) => api.get(`/admin/${s}`)));
+      const [sRes, dRes, pRes, aRes] = results;
 
-      setStats(sRes.data.stats || { totalDoctors: 0, totalPatients: 0, totalAnalyses: 0 });
-      setDoctors(dRes.data.doctors || []);
-      setPatients(pRes.data.patients || []);
-      setAudits(aRes.data.logs || []);
-    } catch (err) {
-      toast.error('Failed to load system admin telemetry.');
+      if (sRes.status === 'fulfilled') {
+        const st = sRes.value.data.stats || {};
+        setStats({
+          totalDoctors: Number(st.totalDoctors) || 0,
+          totalPatients: Number(st.totalPatients) || 0,
+          totalAnalyses: Number(st.totalAnalyses) || 0,
+        });
+      }
+      if (dRes.status === 'fulfilled') setDoctors(dRes.value.data.doctors || []);
+      if (pRes.status === 'fulfilled') setPatients(pRes.value.data.patients || []);
+      if (aRes.status === 'fulfilled') setAudits(aRes.value.data.logs || []);
+
+      const failed = results
+        .map((r, i) => (r.status === 'rejected' ? `${sections[i]} (${(r.reason as any)?.response?.status ?? 'network'}: ${(r.reason as any)?.response?.data?.error ?? (r.reason as any)?.message})` : null))
+        .filter(Boolean);
+      if (failed.length) {
+        console.error('Admin data failed to load:', failed);
+        toast.error(`Could not load: ${failed.join('; ')}`, { duration: 8000 });
+      }
     } finally {
       setLoading(false);
     }
@@ -375,16 +393,33 @@ const AdminDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
+                  {audits.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-10 px-5 text-center text-sm text-slate-600">
+                        No admin actions recorded yet. Reassigning a patient or suspending a doctor appears here.
+                      </td>
+                    </tr>
+                  )}
                   {audits.map((log) => (
                     <tr key={log.id} className="hover:bg-blue-50/60">
                       <td className="py-3.5 px-5">
-                        <Badge variant="warning">{log.action}</Badge>
+                        <Badge variant={ACTION_LABELS[log.action]?.variant ?? 'warning'}>
+                          {ACTION_LABELS[log.action]?.label ?? log.action}
+                        </Badge>
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-slate-700">
-                        {log.patientId ? `Patient #${log.patientId.slice(0, 8)}` : 'System Entity'}
+                      <td className="py-3.5 px-4 text-xs text-slate-700">
+                        {log.patientId
+                          ? `${patients.find((p) => p.id === log.patientId)?.name ?? `Patient #${log.patientId.slice(0, 8)}`}${
+                              log.toDoctorId
+                                ? ` → ${doctors.find((d) => d.uid === log.toDoctorId || d.id === log.toDoctorId)?.displayName ?? 'another doctor'}`
+                                : ''
+                            }`
+                          : log.doctorId
+                            ? doctors.find((d) => d.uid === log.doctorId || d.id === log.doctorId)?.displayName ?? `Doctor #${log.doctorId.slice(0, 8)}`
+                            : 'System'}
                       </td>
-                      <td className="py-3.5 px-4 text-xs font-mono text-slate-600">
-                        {log.performedBy.slice(0, 8)}
+                      <td className="py-3.5 px-4 text-xs text-slate-600">
+                        {doctors.find((d) => d.uid === log.performedBy)?.displayName ?? 'Admin'}
                       </td>
                       <td className="py-3.5 px-5 text-right text-xs text-slate-600">
                         {new Date(log.timestamp).toLocaleString()}

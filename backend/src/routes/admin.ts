@@ -126,6 +126,13 @@ router.patch('/doctors/:doctorId/status', async (req: AuthRequest, res: Response
       updatedAt: new Date().toISOString(),
     });
 
+    await db.collection('audit_logs').add({
+      action: status === 'active' ? 'doctor_activated' : 'doctor_suspended',
+      doctorId,
+      performedBy: req.user!.uid,
+      timestamp: new Date().toISOString(),
+    });
+
     res.json({ message: `Doctor ${status === 'active' ? 'activated' : 'suspended'} successfully` });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
