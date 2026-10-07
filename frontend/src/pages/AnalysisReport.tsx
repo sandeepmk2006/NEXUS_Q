@@ -138,8 +138,10 @@ const AnalysisReport: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="text-xl font-bold text-slate-900 tracking-tight">Tetrix</span>
-                <span className="text-xl font-bold text-blue-600 tracking-tight">AI</span>
+                <span className="text-xl font-bold tracking-tight">
+                  <span className="text-slate-900">Tetrix</span>
+                  <span className="text-blue-600">AI</span>
+                </span>
                 <Badge variant="info">Clinical Decision Support</Badge>
               </div>
               <p className="text-xs text-slate-600 mt-1">

@@ -33,3 +33,9 @@ localdb.json
 /*.docx
 *.bak
 .playwright-mcp/
+
+# Test scenario images (local only)
+/test-scenarios/**/*.jpg
+/test-scenarios/**/*.jpeg
+/test-scenarios/**/*.png
+/test-scenarios/**/*.webp
