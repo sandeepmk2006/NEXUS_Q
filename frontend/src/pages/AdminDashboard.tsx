@@ -261,7 +261,7 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'doctors' && (
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Doctor Name</th>
@@ -321,7 +321,7 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'patients' && (
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Patient Name</th>
@@ -365,7 +365,7 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'audits' && (
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Event Action</th>

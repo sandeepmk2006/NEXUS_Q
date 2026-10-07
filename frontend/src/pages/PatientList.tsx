@@ -205,9 +205,9 @@ const PatientList: React.FC = () => {
                   <tr className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
                     <th className="py-3.5 px-5">Patient Name</th>
                     <th className="py-3.5 px-4">Demographics</th>
-                    <th className="py-3.5 px-4">Blood Group</th>
+                    <th className="hidden sm:table-cell py-3.5 px-4">Blood Group</th>
                     {isAdmin && <th className="py-3.5 px-4">Attending Doctor</th>}
-                    <th className="py-3.5 px-4">Last Analysis</th>
+                    <th className="hidden md:table-cell py-3.5 px-4">Last Analysis</th>
                     <th className="py-3.5 px-5 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -217,7 +217,7 @@ const PatientList: React.FC = () => {
                       key={patient.id}
                       className="hover:bg-blue-50/60 transition-colors"
                     >
-                      <td className="py-3.5 px-5">
+                      <td className="py-3.5 px-5 min-w-[9rem]">
                         <div className="font-semibold text-slate-900">{patient.name}</div>
                         {patient.phone && (
                           <div className="text-xs text-slate-600">{patient.phone}</div>
@@ -226,7 +226,7 @@ const PatientList: React.FC = () => {
                       <td className="py-3.5 px-4 text-slate-700">
                         {patient.age} yrs • {patient.gender}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="hidden sm:table-cell py-3.5 px-4">
                         <Badge variant="info">{patient.bloodType || 'N/A'}</Badge>
                       </td>
                       {isAdmin && (
@@ -236,7 +236,7 @@ const PatientList: React.FC = () => {
                           </span>
                         </td>
                       )}
-                      <td className="py-3.5 px-4 text-xs text-slate-600">
+                      <td className="hidden md:table-cell py-3.5 px-4 text-xs text-slate-600">
                         {patient.lastAnalysisAt
                           ? new Date(patient.lastAnalysisAt).toLocaleDateString()
                           : 'No scan on file'}

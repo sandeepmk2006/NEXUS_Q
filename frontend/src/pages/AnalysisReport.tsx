@@ -151,12 +151,12 @@ const AnalysisReport: React.FC = () => {
               </p>
             </div>
 
-            <div className="text-right text-xs text-slate-600">
+            <div className="sm:text-right text-xs text-slate-600 min-w-0">
               <div className="flex items-center sm:justify-end gap-1.5 text-slate-700">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{new Date(report.createdAt).toLocaleString()}</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5 font-mono">ID: {report.id}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5 font-mono break-all">ID: {report.id}</p>
             </div>
           </div>
 
@@ -184,7 +184,7 @@ const AnalysisReport: React.FC = () => {
               <span className="text-slate-500 font-medium block">Imaging Modality</span>
               <span className="text-slate-800 font-semibold text-sm">{report.imageType}</span>
               <span className="text-slate-600 block text-[11px] mt-0.5">
-                {report.imageName || 'Scan File'}
+                <span className="break-all">{report.imageName || 'Scan File'}</span>
               </span>
             </div>
 
@@ -257,10 +257,10 @@ const AnalysisReport: React.FC = () => {
         </div>
 
         {/* Executive Summary */}
-        <div className="bg-white border border-blue-200 rounded-2xl p-6 space-y-3 relative overflow-hidden shadow-sm">
-          <div className="flex items-center justify-between">
+        <div className="bg-white border border-blue-200 rounded-2xl p-4 sm:p-6 space-y-3 relative overflow-hidden shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
+              <Activity className="w-5 h-5 text-blue-600 flex-shrink-0" />
               <h3 className="text-base font-bold text-slate-900">Diagnostic AI Executive Summary</h3>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
@@ -275,9 +275,9 @@ const AnalysisReport: React.FC = () => {
 
         {/* Detailed Findings List */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <ScanLine className="w-5 h-5 text-blue-600" />
+              <ScanLine className="w-5 h-5 text-blue-600 flex-shrink-0" />
               <span>Identified Pathological & Anatomical Findings ({analysis?.findings?.length || 0})</span>
             </h3>
             <span className="text-xs text-slate-600">

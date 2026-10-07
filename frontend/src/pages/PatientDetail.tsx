@@ -166,7 +166,7 @@ const PatientDetail: React.FC = () => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex gap-2 border-b border-slate-200 mt-6 -mb-2">
+          <div className="flex gap-2 border-b border-slate-200 mt-6 -mb-2 overflow-x-auto">
             {[
               { id: 'overview', label: 'Patient Overview', icon: User },
               { id: 'history', label: 'Clinical History', icon: FileText },
@@ -177,7 +177,7 @@ const PatientDetail: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2 pb-3 px-3 text-xs font-semibold border-b-2 transition-all ${
+                  className={`flex items-center gap-2 pb-3 px-3 text-xs font-semibold border-b-2 transition-all whitespace-nowrap flex-shrink-0 ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -205,7 +205,7 @@ const PatientDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3 text-slate-700">
                   <Mail className="w-4 h-4 text-slate-600" />
-                  <span>{patient.email || 'No email recorded'}</span>
+                  <span className="break-all min-w-0">{patient.email || 'No email recorded'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-slate-700">
                   <MapPin className="w-4 h-4 text-slate-600" />

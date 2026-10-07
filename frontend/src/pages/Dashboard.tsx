@@ -34,10 +34,18 @@ interface Analysis {
   patientName: string;
   patientId: string;
   imageType: string;
-  confidenceScore: number;
   createdAt: string;
   summary?: string;
+  analysis?: { findings?: { confidence?: number }[] };
 }
+
+/** Highest finding confidence in a report, or null when it has no findings. */
+const topConfidence = (a: Analysis): number | null => {
+  const scores = (a.analysis?.findings || [])
+    .map((f) => Number(f.confidence))
+    .filter((n) => Number.isFinite(n));
+  return scores.length ? Math.max(...scores) : null;
+};
 
 interface AdminStats {
   totalDoctors: number;
@@ -309,8 +317,8 @@ const Dashboard: React.FC = () => {
                     <tr className="text-xs text-slate-500 border-b border-slate-200">
                       <th className="text-left px-5 py-3">Name</th>
                       <th className="text-left px-3 py-3">Age</th>
-                      <th className="text-left px-3 py-3">Gender</th>
-                      <th className="text-left px-3 py-3">Last Analysis</th>
+                      <th className="hidden sm:table-cell text-left px-3 py-3">Gender</th>
+                      <th className="hidden sm:table-cell text-left px-3 py-3">Last Analysis</th>
                       <th className="text-left px-3 py-3">Status</th>
                       <th className="px-3 py-3" />
                     </tr>
@@ -321,14 +329,14 @@ const Dashboard: React.FC = () => {
                         key={p.id}
                         className="hover:bg-slate-100 transition-colors"
                       >
-                        <td className="px-5 py-3.5 font-medium text-slate-800">
+                        <td className="px-5 py-3.5 font-medium text-slate-800 min-w-[8rem]">
                           {p.name}
                         </td>
                         <td className="px-3 py-3.5 text-slate-600">{p.age}</td>
-                        <td className="px-3 py-3.5 text-slate-600 capitalize">
+                        <td className="hidden sm:table-cell px-3 py-3.5 text-slate-600 capitalize">
                           {p.gender}
                         </td>
-                        <td className="px-3 py-3.5 text-slate-600">
+                        <td className="hidden sm:table-cell px-3 py-3.5 text-slate-600">
                           {formatDate(p.lastAnalysisDate ?? '')}
                         </td>
                         <td className="px-3 py-3.5">
@@ -390,15 +398,19 @@ const Dashboard: React.FC = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-slate-800 truncate">
-                          {a.patientName}
+                          {a.patientName || patients.find((p) => p.id === a.patientId)?.name || 'Patient'}
                         </p>
                         <p className="text-xs text-slate-500 capitalize mt-0.5">
                           {a.imageType}
                         </p>
                         <div className="flex items-center justify-between mt-1.5">
-                          <Badge variant={getConfidenceVariant(a.confidenceScore)}>
-                            {a.confidenceScore}% confidence
-                          </Badge>
+                          {topConfidence(a) === null ? (
+                            <Badge variant="default">No findings</Badge>
+                          ) : (
+                            <Badge variant={getConfidenceVariant(topConfidence(a)!)}>
+                              {topConfidence(a)}% confidence
+                            </Badge>
+                          )}
                           <span className="text-[10px] text-slate-600">
                             {formatDate(a.createdAt)}
                           </span>
