@@ -3,7 +3,7 @@
 > The GitHub repository is named `NEXUS_Q`; the product is called **TetrixAI**.
 > HackNex 2026 | Problem Statement HNX26PSI05 | Team Submission
 
-**Live demo:** _add the Cloudflare Pages URL here after deploying (see Deployment)._
+**Live demo:** _add the Render frontend URL here after deploying (see Deployment)._
 [![GitHub](https://img.shields.io/badge/GitHub-NEXUS__Q-black)](https://github.com/sandeepmk2006/NEXUS_Q)
 
 ---
@@ -49,7 +49,7 @@ NEXUS_Q/
 | Database | Firebase Firestore |
 | Backend | Node.js, Express, TypeScript |
 | AI Engine | Google Gemini via `@google/generative-ai` (model set in `MODEL_NAME`, `backend/src/services/geminiService.ts`; currently `gemini-flash-lite-latest`) |
-| Deployment | Cloudflare Pages (frontend) + Render (backend), both auto-deploy from GitHub |
+| Deployment | Render: static site (frontend) + web service (backend), auto-deployed from GitHub |
 
 ---
 
@@ -232,56 +232,48 @@ White and blue clinical theme throughout. Each report shows the scan with number
 
 ---
 
-## 🌐 Deployment
+## 🌐 Deployment (Render)
 
-Both halves redeploy automatically on every `git push` to `main`. There is no manual deploy step.
+The whole app runs on Render's free plan, defined in `render.yaml`. Both parts redeploy automatically on every `git push` to `main`. There is no manual deploy step.
 
 ```
-GitHub (main) ──push──► Cloudflare Pages  → frontend (React build)
-              └─push──► Render (free)     → backend (Express API)
+GitHub (main) ──push──► Render
+                          ├─ tetrixai-frontend  static site (React build)
+                          └─ tetrixai-backend   web service (Express API)
 ```
 
-The backend is an Express server, so it runs on Render rather than Cloudflare Workers. `render.yaml` describes it.
+### 1. Create both services (one time)
+In Render, choose **New → Blueprint** and select this repository. Render reads `render.yaml` and creates both services. It asks for the values below.
 
-### 1. Backend on Render (one-time setup)
-1. In Render, choose **New → Blueprint** and select this repository. Render reads `render.yaml`.
-2. Fill in the environment variables it asks for:
+**Backend (`tetrixai-backend`)**
 
 | Variable | Value |
 |----------|-------|
 | `GEMINI_API_KEY` | Your Gemini API key |
-| `FRONTEND_URL` | The Cloudflare Pages URL from step 2, e.g. `https://tetrixai.pages.dev` (comma-separate several) |
+| `FRONTEND_URL` | The frontend's URL, e.g. `https://tetrixai-frontend.onrender.com` (comma-separate several) |
 | `FIREBASE_PROJECT_ID` | Same as `VITE_FIREBASE_PROJECT_ID`. **Required**: production only accepts properly verified sign-in tokens |
 | `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | Optional service account. With them, data is stored in Firestore. Without them it goes to `localdb.json`, which Render wipes on every redeploy or restart |
 | `ADMIN_EMAIL`, `ADMIN_INIT_SECRET` | For creating the admin account |
 
-3. Once it is live, open `https://<your-service>.onrender.com/health` and check that it returns `{"status":"ok"}`.
-
-### 2. Frontend on Cloudflare Pages (one-time setup)
-1. In Cloudflare, go to **Workers & Pages → Create → Pages → Connect to Git** and select this repository.
-2. Build settings:
-
-| Setting | Value |
-|---------|-------|
-| Root directory | `frontend` |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-
-3. Environment variables (Production):
+**Frontend (`tetrixai-frontend`)**
 
 | Variable | Value |
 |----------|-------|
-| `VITE_API_URL` | `https://<your-service>.onrender.com/api` |
+| `VITE_API_URL` | The backend's URL plus `/api`, e.g. `https://tetrixai-backend.onrender.com/api` |
 | `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID` | From your Firebase web app config |
 
-`frontend/public/_redirects` sends every route to `index.html` so links like `/analysis/<id>` work on refresh. `frontend/.node-version` pins Node 22.
+You only know the final `.onrender.com` URLs after the services are created. If you had to guess them, correct `FRONTEND_URL` and `VITE_API_URL` afterwards in each service's **Environment** tab. The frontend then needs a redeploy (**Manual Deploy → Deploy latest commit**), because `VITE_*` values are baked in at build time.
 
-### 3. Firebase (one-time)
-In the Firebase console, open **Authentication → Settings → Authorized domains** and add your `*.pages.dev` domain. Google sign-in fails on the live site without this.
+### 2. Allow sign-in from the live site (one time)
+In the Firebase console, open **Authentication → Settings → Authorized domains** and add the frontend's `onrender.com` domain. Google sign-in fails on the live site without this.
+
+### 3. Check it
+- `https://<backend>.onrender.com/health` returns `{"status":"ok"}`.
+- The frontend loads, Google sign-in works, and refreshing a page such as `/analysis/<id>` still works (`render.yaml` rewrites every route to `index.html`).
 
 ### Things to know
-- Render's free plan sleeps after about 15 minutes idle; the first request then takes around 30-60 seconds. Open the site a minute before a demo.
-- After changing an environment variable in Cloudflare Pages, trigger a new deployment. `VITE_*` values are baked in at build time.
+- The free backend sleeps after about 15 minutes idle; the first request then takes around 30-60 seconds. Open the site a minute before a demo. The static frontend does not sleep.
+- Node 22 is pinned through `NODE_VERSION` in `render.yaml`.
 
 ## ⚠️ Known Limitations
 

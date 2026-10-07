@@ -36,7 +36,7 @@ There is no test suite. `backend/test_gemini.js` and `backend/list_models.js` ar
 - `store/authStore.ts`: persisted Zustand auth/user state.
 - `pages/`: route-level screens (Dashboard, PatientList/Detail, NewAnalysis, AnalysisReport, AdminDashboard, …). API list responses are wrapped objects (e.g. `{ patients: [...] }`, `{ analyses: [...] }`), not bare arrays, so unwrap them before mapping.
 
-**Deployment**: frontend on Cloudflare Pages (Git integration, root `frontend`, output `dist`, SPA fallback in `public/_redirects`); backend on Render via `render.yaml`. Both auto-deploy on push to `main`. `VITE_API_URL` points the frontend at the Render URL (including `/api`); `FRONTEND_URL` (comma-separated) is the backend's CORS allow-list.
+**Deployment**: everything on Render via `render.yaml`: `tetrixai-frontend` (static site, root `frontend`, publish `dist`, SPA rewrite `/*` → `/index.html`) and `tetrixai-backend` (Node web service, root `backend`). Both auto-deploy on push to `main`. `VITE_API_URL` points the frontend at the backend URL (including `/api`); `FRONTEND_URL` (comma-separated) is the backend's CORS allow-list.
 
 ## Environment
 
