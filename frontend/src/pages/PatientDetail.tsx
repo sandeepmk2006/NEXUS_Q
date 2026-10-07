@@ -45,6 +45,7 @@ interface AnalysisItem {
   analysis: {
     summary: string;
     imageQuality: string;
+    imageQualityRating?: string;
     findings: Array<{
       finding: string;
       confidence: number;
@@ -139,10 +140,9 @@ const PatientDetail: React.FC = () => {
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">{patient.name}</h2>
                 <div className="flex flex-wrap items-center gap-2.5 mt-1 text-xs text-slate-600">
-                  <span>{patient.age} years old</span>
-                  <span>•</span>
-                  <span>{patient.gender}</span>
-                  <span>•</span>
+                  <span>
+                    {patient.age} years old · {patient.gender}
+                  </span>
                   <Badge variant="info">Blood: {patient.bloodType || 'Unknown'}</Badge>
                 </div>
               </div>
@@ -166,7 +166,7 @@ const PatientDetail: React.FC = () => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex gap-2 border-b border-slate-200 mt-6 -mb-2 overflow-x-auto">
+          <div className="flex gap-2 border-b border-slate-200 mt-6 -mb-2 overflow-x-auto no-scrollbar">
             {[
               { id: 'overview', label: 'Patient Overview', icon: User },
               { id: 'history', label: 'Clinical History', icon: FileText },
@@ -315,24 +315,31 @@ const PatientDetail: React.FC = () => {
                     className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-blue-300 transition-all cursor-pointer shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
                   >
                     <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="info">{scan.imageType.toUpperCase()}</Badge>
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <Badge variant="info" className="whitespace-nowrap">{scan.imageType}</Badge>
+                        <span className="text-xs text-slate-500 flex items-center gap-1 whitespace-nowrap">
                           <Clock className="w-3.5 h-3.5" />
                           {new Date(scan.createdAt).toLocaleString()}
                         </span>
-                        <Badge
-                          variant={
-                            scan.analysis.imageQuality?.toLowerCase().includes('poor')
-                              ? 'danger'
-                              : 'success'
-                          }
-                        >
-                          Quality: {scan.analysis.imageQuality || 'Standard'}
-                        </Badge>
+                        {(() => {
+                          const rating = (scan.analysis.imageQualityRating ||
+                            ['poor', 'fair', 'excellent', 'good'].find((r) =>
+                              scan.analysis.imageQuality?.toLowerCase().includes(r)
+                            ) ||
+                            '') as string;
+                          if (!rating || rating === 'unknown') return null;
+                          return (
+                            <Badge
+                              variant={rating === 'poor' ? 'danger' : rating === 'fair' ? 'warning' : 'success'}
+                              className="whitespace-nowrap capitalize"
+                            >
+                              {rating} quality
+                            </Badge>
+                          );
+                        })()}
                       </div>
 
-                      <p className="text-sm font-semibold text-slate-800">
+                      <p className="text-sm text-slate-800 leading-relaxed line-clamp-3">
                         {scan.analysis.summary}
                       </p>
 

@@ -1,0 +1,14 @@
+{
+  "name": "TetrixAI",
+  "short_name": "TetrixAI",
+  "description": "AI second opinion for medical scans, with every finding outlined and its confidence shown.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1d4ed8",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

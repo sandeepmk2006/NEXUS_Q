@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /$
+Allow: /signin
+Allow: /register
+Disallow: /dashboard
+Disallow: /patients
+Disallow: /analysis
+Disallow: /admin
+Disallow: /profile
+
+Sitemap: https://tetrixai.tech/sitemap.xml

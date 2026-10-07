@@ -170,6 +170,8 @@ White and blue clinical theme throughout. Each report shows the scan with number
 
 **Minimum viable (implemented):** upload -> multimodal Gemini analysis -> structured findings with confidence, evidence, bounding boxes -> annotated report; auth, patients, admin.
 
+**Validated vs. supported:** tested end to end on chest X-rays only (5 scenarios in [`test-scenarios/`](test-scenarios/README.md)). Other modalities such as CT slices and MRI are accepted and analysed by the same pipeline, but have not been tested.
+
 **Stretch / not done:** automated tests, pixel-level segmentation, heatmaps, DICOM support, a locally trained or fine-tuned model, quantitative evaluation on a labelled dataset.
 
 ## 📦 External Resources Declared

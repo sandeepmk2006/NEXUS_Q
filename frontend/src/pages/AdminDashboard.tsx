@@ -207,10 +207,10 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 gap-4">
+        <div className="flex border-b border-slate-200 gap-4 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('doctors')}
-            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`whitespace-nowrap flex-shrink-0 pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'doctors'
                 ? 'border-blue-500 text-blue-700'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -221,7 +221,7 @@ const AdminDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('patients')}
-            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`whitespace-nowrap flex-shrink-0 pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'patients'
                 ? 'border-blue-500 text-blue-700'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -232,7 +232,7 @@ const AdminDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('audits')}
-            className={`pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`whitespace-nowrap flex-shrink-0 pb-3 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'audits'
                 ? 'border-blue-500 text-blue-700'
                 : 'border-transparent text-slate-600 hover:text-slate-900'

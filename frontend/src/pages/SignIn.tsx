@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
-import { Stethoscope, ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { auth, googleProvider } from '../config/firebase';
 import api from '../config/api';
@@ -198,9 +198,7 @@ const SignIn: React.FC = () => {
       {/* Brand panel */}
       <aside className="hidden lg:flex flex-col justify-between bg-blue-700 text-white px-14 py-12">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
-            <Stethoscope className="w-5 h-5 text-white" />
-          </div>
+          <img src="/favicon.svg" alt="" className="w-10 h-10 rounded-lg flex-shrink-0 ring-1 ring-white/40" />
           <span className="text-xl font-semibold tracking-tight">TetrixAI</span>
         </div>
 
@@ -236,9 +234,7 @@ const SignIn: React.FC = () => {
       <main className="flex flex-col justify-center px-6 py-12 sm:px-12">
         <div className="w-full max-w-md mx-auto">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Stethoscope className="w-5 h-5 text-white" />
-            </div>
+            <img src="/favicon.svg" alt="" className="w-9 h-9 rounded-lg flex-shrink-0" />
             <span className="text-xl font-semibold tracking-tight">TetrixAI</span>
           </div>
 
